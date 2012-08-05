@@ -1,2 +1,95 @@
-%h1= @title
-%p= "Welcome 2 to #{ @title }"
+!!!
+%html
+  %head
+    %title CoffeeDoc.info - Codo Documentation Server
+    %link{ rel: 'shortcut icon', href: '/images/favicon.ico' }
+    != js 'jquery'
+    != js 'application'
+    != css 'application'
+
+  %body
+    #logo
+      %h1
+        %a{ href: '/' } CoffeeDoc.info
+        %small Codo Documentation Server
+
+    %ul#top_nav
+      %li
+        %a.new_checkout{ href: '#' } Add Project
+      %li
+        %a.about{ href: '#' } About
+
+    #info
+      %p
+        %strong CoffeeDoc.info
+        is your source for open source CoffeeScript library documentation,
+        generating fresh docs for popular Git repositories.
+      %p
+        This site uses
+        %a{ href: 'https://github.com/netzpirat/codo' } Codo
+        to generate docs on the fly.
+        To make your docs look better, you can check out Codo's documentation.
+      %p
+        Looking for a
+        %a{ href: 'http://github.com' } GitHub
+        != succeed '?', ->
+          %a{ href: 'http://help.github.com/post-receive-hooks/' } post-receive hook
+        Use
+          != succeed '.', ->
+            %tt http://www.coffeedoc.info/checkout
+      %p
+        %small
+          CoffeeDoc.info was made possible by
+          != succeed ',', ->
+            %strong Michael Kessler
+          with help from a
+          != succeed '.', ->
+            %a{ href: 'https://github.com/netzpirat/codo/graphs/contributors' } friendly contributors
+          It's heavily inspired by
+          %a{ href: 'http://yardoc.org/' } YARD
+          and
+          != succeed ',', ->
+            %a{ href: 'http://www.rubydoc.info/' } RubyDoc.info
+          which was made possible by
+          %strong Loren Segal
+          and
+          != succeed '.', ->
+            %strong Nick Plante
+
+    #checkout
+      %h2 Add your own project
+      %small.example (eg. git://github.com/netzpirat/codo.git)
+      %form#checkout_form{ action: '/checkout', method: 'post' }
+        %input#url.url{ type: 'text', name: 'url', placeholder: 'git://github.com/username/project' }
+        .loadicon
+        %input#scheme{ type: 'hidden', name: 'scheme', value: 'git' }
+        %br
+        %small
+          Commit (optional):
+          %input#commit{ type: 'text', name: 'commit', value: '', style: 'width: 122px;' }
+          %input#submit{ type: 'submit', id: 'submit', value: 'Go' }
+
+    #content
+      %h2 Github Projects
+      %ul.libraries
+        %li
+          %a{ href: '/github/pieterb/Rackful/master/frames' }
+            %strong pieterb/Rackful
+          %a{ href: 'http://github.com/pieterb/Rackful', title: 'View this project on Github' }
+            %img{ class: 'icon github', src: '/images/git.png' }
+          %small (master)
+
+  #footer
+    %a{ href: 'http://github.com/netzpirat/coffeedoc.info' } CoffeeDoc.info
+    is powered by
+    %a{ href: 'http://github.com/netzpirat/codo' } Codo
+    x.y.z
+    = surround '(Node.js ', ').', -> process.version
+
+    %p.sponsor
+      Developed by
+      %a{ href: 'https://github.com/netzpirat'} Michael Kessler
+      &#10034;
+      %a{ href: 'http://twitter.com/#!/netzpirat'} @netzpirat
+      &#10034;
+      %a{ href: 'https://mksoft.ch'} mksoft.ch

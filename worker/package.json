@@ -6,7 +6,8 @@
         "start": "coffee app.coffee"
     },
     "dependencies": {
-        "kue": "0.4.0"
+        "kue": "0.4.0",
+        "redis": "0.7.2"
     },
     "analyze": false,
     "subdomain": "worker.coffeedoc",

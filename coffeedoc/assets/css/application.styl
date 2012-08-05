@@ -1,0 +1,292 @@
+body {
+  padding: 0 20px;
+  font-family: "Lucida Sans", "Lucida Grande", Verdana, Arial, sans-serif;
+  font-size: 13px;
+}
+
+a {
+  outline: none;
+  color: #00B7FF;
+}
+
+.libraries {
+  list-style: none;
+  padding: 0;
+
+  li { font-size: 1.2em;
+    line-height: 1.4em;
+    padding: 3px 5px;
+  }
+
+  ul {
+    padding: 0;
+    margin-bottom: 5px;
+  }
+
+  ul li {
+    list-style: none;
+    line-height: 0.9em;
+    font-size: 1.05em;
+    padding: 3px 5px;
+    font-weight: normal;
+    padding-left: 25px;
+  }
+
+  ul {
+    background: #eee;
+  }
+
+  li {
+    line-height: 2em;
+    border-bottom: 1px solid #ddd;
+  }
+
+  ul li {
+    padding-bottom: 6px;
+    background: #f0f0f0;
+  }
+
+  ul {
+    padding-bottom: 10px;
+    background: transparent;
+  }
+
+  li:hover {
+    background: #eef;
+  }
+
+  li.alternate, li.alternate:hover {
+    background: transparent;
+  }
+
+  li.alternate_fork img {
+    position: relative;
+    top: -3px;
+  }
+
+  li a:hover {
+    background: transparent;
+    color: #3ae;
+  }
+
+  li.core > a:first-child {
+    font-weight: bold;
+  }
+
+  .icon {
+    width: 16px;
+    height: 16px;
+    position: relative;
+    float: right;
+    top: 6px;
+    border: 1px solid #ccc;
+    background: #eee;
+    padding: 2px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    margin-left: 3px;
+  }
+
+  a:hover .icon {
+    background: #fff;
+  }
+}
+
+#logo {
+  h1 {
+    margin: 0;
+    border: 0;
+    color: #58b;
+  }
+
+  small {
+    color: #369;
+    font-size: 0.6em;
+    font-weight: normal;
+    opacity: 0.6;
+  }
+
+  a {
+    text-decoration: none;
+    color: #58b;
+
+    &:hover {
+      color: #8cf;
+      border-bottom: 8px solid #8cf;
+    }
+  }
+}
+
+#top_nav {
+  padding: 0;
+  list-style: none;
+  position: absolute;
+  right: 140px;
+  top: 3px;
+  z-index: 9999;
+
+  li {
+    float: left;
+    margin-right: 10px;
+  }
+
+  a {
+    display:block;
+    padding: 5px 8px;
+    background: #58a;
+    text-decoration: none;
+    color: #eee;
+    opacity: 0.7;
+    -webkit-border-radius: 5px; -moz-border-radius: 5px;
+    -webkit-transition: all 0.1s ease-in;
+
+    &:hover {
+      opacity: 1;
+      color: #fff;
+    }
+  }
+}
+
+#info {
+  font-size: 1.1em;
+  line-height: 1.4em;
+  display: none;
+  position: absolute;
+  width: 350px;
+  padding: 10px 20px;
+  top: 55px;
+  right: 120px;
+  background: #fff;
+  z-index: 10000;
+  border: 1px solid #aaa;
+  -webkit-box-shadow: 0px 2px 15px #aaa;
+  -moz-box-shadow: 0px 2px 15px #aaa;
+
+  a {
+    color: #05a;
+
+    &:hover {
+      color: #5af;
+    }
+  }
+}
+
+
+#content {
+  h1 {
+    margin: 0;
+  }
+
+  h2 {
+    margin-top: 0.8em;
+  }
+
+  h2 {
+    padding: 0;
+    padding-bottom: 3px;
+    border-bottom: 1px #aaa solid;
+    font-size: 1.6em;
+    margin: 1.8em 0 0.5em;
+  }
+
+  h2 small {
+    font-weight: normal;
+    font-size: 0.7em;
+    display: block;
+    float: right;
+  }
+
+  a:link, #content a:visited {
+    color: #05A;
+    text-decoration: none;
+
+    &:hover {
+      background: #ffffa5;
+    }
+  }
+}
+
+#checkout {
+  display: none;
+  position: absolute;
+  top: 42px;
+  right: 175px;
+  height: 120px;
+  padding: 8px 18px;
+  margin: 12px;
+  background: #ddd; color: #666; border: 1px solid #ccc;
+  -webkit-box-shadow: 0px 2px 15px #aaa; -moz-box-shadow: 0px 2px 15px #aaa;
+  *font-size: 0.9em;
+  width: 280px;
+
+  form {
+    display: inline;
+  }
+
+  h2 {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-weight: normal;
+    font-size: 1.1em;
+  }
+
+  .example {
+    color: #999;
+  }
+
+  input {
+    font-size: 1em;
+  }
+
+  .loadicon {
+    display: none;
+    float: right;
+    position: relative;
+    left: -20px;
+    top: 6px;
+    width: 16px;
+    height: 16px;
+    background: url(/images/loading.gif);
+  }
+
+  .error #url {
+    background: #fdd;
+  }
+
+  #commit {
+    width: 131px;
+  }
+
+  .error:after {
+    content: "Invalid git repository or URL";
+    color: #e00;
+    display: block;
+  }
+
+  .loading .loadicon {
+    display: block;
+  }
+
+  .url {
+    width: 225px;
+    margin-bottom: 3px;
+  }
+}
+
+#footer {
+  margin-top: 15px;
+  text-align: center;
+  padding: 7px 0;
+  color: #999;
+}
+
+#footer a:link, #footer a:visited {
+  color: #444;
+  text-decoration: none;
+  border-bottom: 1px dotted #bbd;
+}
+
+#footer a:hover {
+  color: #05a;
+}
