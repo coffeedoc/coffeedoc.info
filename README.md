@@ -9,7 +9,7 @@ You'll find me online at [http://www.coffeedoc.info](http://www.coffeedoc.info).
 
 The app is hosted on [nodejitsu](http://nodejitsu.com/) and consists of two drones:
 
-### The express website
+### The website
 
 This drone is located under the `site` directory and is a simple [Express](https://github.com/visionmedia/express)
 app that serves existing documentation and enqueues new requests for adding projects to the job queue.
@@ -23,7 +23,7 @@ coffee app.coffee
 
 and open it in your browser under [http://localhost:8080/](http://localhost:8080/)
 
-### The kue jobs queue
+### The jobs queue
 
 This drone is located under the `queue` directory and starts the [Kue](https://github.com/LearnBoost/kue) web interface
 for monitoring the jobs queue and waits for working the incoming jobs off.
@@ -31,7 +31,7 @@ for monitoring the jobs queue and waits for working the incoming jobs off.
 You can start the second drone locally with:
 
 ```
-cd kue
+cd queue
 coffee app.coffee
 ```
 
