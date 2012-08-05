@@ -8,6 +8,9 @@
     != css 'application'
 
   %body
+    %a#learn_codo{ href: 'https://github.com/netzpirat/codo', title: 'Learn More About Codo' }
+      %img{ src: '/images/learn.png' }
+
     #logo
       %h1
         %a{ href: '/' } CoffeeDoc.info
