@@ -10,6 +10,17 @@
 
     %script{ src: '/socket.io/socket.io.js' }
 
+    :javascript
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-33919772-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
   %body
     %a#learn_codo{ href: 'https://github.com/netzpirat/codo', title: 'Learn More About Codo' }
       %img{ src: '/images/learn.png' }
@@ -75,6 +86,20 @@
           %input#submit{ type: 'submit', id: 'submit', value: 'Go' }
       #message
 
+    #teaser
+      %p
+        Welcome to CoffeeDoc.info, a site devoted to generate and serve nice API documentation for
+        %a{ href: '' } CoffeeScript
+        projects that are hosted on
+        %a{ href: '' } GitHub
+        and make use of
+        != succeed ',', ->
+          %a{ href: '' } Codo
+        the documentation generator that is similar to
+        %a{ href: '' } YARD.
+        Help spread the word, start using Codo and make your users happy by having a fantastic documentation that
+        looks and feels right and helps to find quickly the information needed.
+
     #content
       %h2 Github Projects
       %ul.libraries
@@ -87,7 +112,7 @@
               %img{ class: 'icon github', src: '/images/git.png' }
             %small
               != surround '(', ')', ->
-                = version
+                %span<>= version
                 - for v in project.versions
                   != precede ',', ->
                     %a{ href: "/github/#{ project.user }/#{ project.project }/#{ v }" }= v
@@ -98,6 +123,9 @@
     %a{ href: 'http://github.com/netzpirat/codo' } Codo
     = @codoVersion
     = surround '(Node.js ', ').', -> process.version
+    &#10034;
+    Report bugs on
+    %a{ href: 'https://github.com/netzpirat/coffeedoc.info/issues' } GitHub Issues
     &#10034;
     Developed by
     %a{ href: 'https://github.com/netzpirat'} Michael Kessler

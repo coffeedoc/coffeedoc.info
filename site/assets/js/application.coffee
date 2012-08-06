@@ -58,10 +58,17 @@ $(->
   $('a.new_checkout').click (event) ->
     if $('#checkout').is(':hidden')
       $('#info').hide()
+      $('#checkout').removeClass 'error'
+      $('#message').html ''
+      $('#url').val ''
+      $('#commit').val ''
       $('#checkout').fadeIn 'fast'
     else
       $('#checkout').fadeOut 'fast'
 
     event.preventDefault()
+
+  $('.libraries li').each (i, el) ->
+    if i % 2 is 0 then $(el).addClass('stripe') else $(el).removeClass('stripe')
 
 )
