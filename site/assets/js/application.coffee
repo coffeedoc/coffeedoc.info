@@ -13,6 +13,8 @@ $(->
     $('#checkout').removeClass 'loading'
     $('#submit').attr 'disabled', false
     $('#checkout').fadeOut 'fast'
+    $('.loadicon').css 'display', 'none'
+    $('#message').html "<p>Documentation has been generated.</p>"
 
   # Checkout failed
   #
@@ -20,6 +22,8 @@ $(->
     $('#checkout').addClass 'error'
     $('#checkout').removeClass 'loading'
     $('#submit').attr 'disabled', false
+    $('.loadicon').css 'display', 'none'
+    $('#message').html "<p>Failed to generate the documentation!</p>"
 
   # Checkout new project
   #

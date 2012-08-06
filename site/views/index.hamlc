@@ -78,18 +78,25 @@
     #content
       %h2 Github Projects
       %ul.libraries
-        %li
-          %a{ href: '/github/pieterb/Rackful/master/frames' }
-            %strong pieterb/Rackful
-          %a{ href: 'http://github.com/pieterb/Rackful', title: 'View this project on Github' }
-            %img{ class: 'icon github', src: '/images/git.png' }
-          %small (master)
+        - for project in @projects
+          %li
+            - version = project.versions.shift()
+            %a{ href: "/github/#{ project.user }/#{ project.project }/#{ version }" }
+              %strong= "#{ project.user }/#{ project.project }"
+            %a{ href: "https://github.com/#{ project.user }/#{ project.project }", title: 'View this project on Github' }
+              %img{ class: 'icon github', src: '/images/git.png' }
+            %small
+              != surround '(', ')', ->
+                = version
+                - for v in project.versions
+                  != precede ',', ->
+                    %a{ href: "/github/#{ project.user }/#{ project.project }/#{ v }" }= v
 
   #footer
     %a{ href: 'http://github.com/netzpirat/coffeedoc.info' } CoffeeDoc.info
     is powered by
     %a{ href: 'http://github.com/netzpirat/codo' } Codo
-    x.y.z
+    = @codoVersion
     = surround '(Node.js ', ').', -> process.version
     &#10034;
     Developed by

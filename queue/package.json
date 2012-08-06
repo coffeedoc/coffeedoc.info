@@ -9,7 +9,9 @@
     "kue": "0.4.0",
     "redis": "0.7.2",
     "codo": "0.9.1",
-    "temp": "0.4.0"
+    "temp": "0.4.0",
+    "mongoose": "2.7.3",
+    "rimraf": "2.0.2"
   },
   "analyze": false,
   "subdomain": "queue.coffeedoc",

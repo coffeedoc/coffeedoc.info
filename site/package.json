@@ -13,7 +13,8 @@
     "kue": "0.4.0",
     "redis": "0.7.2",
     "codo": "0.9.1",
-    "socket.io": "0.9.9"
+    "socket.io": "0.9.9",
+    "mongoose": "2.7.3"
   },
   "analyze": false,
   "subdomain": "www.coffeedoc",

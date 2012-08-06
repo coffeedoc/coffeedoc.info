@@ -1,10 +1,27 @@
 #!/usr/bin/env coffee
 
-express = require 'express'
-http    = require 'http'
-path    = require 'path'
-kue     = require 'kue'
-redis   = require 'redis'
+express  = require 'express'
+http     = require 'http'
+path     = require 'path'
+kue      = require 'kue'
+redis    = require 'redis'
+mongoose = require 'mongoose'
+{Schema} = require 'mongoose'
+Codo     = require 'codo'
+
+CodoProjectSchema = new Schema
+  user:     { type: String }
+  project:  { type: String }
+  versions: { type: Array }
+  updated:  { type: String }
+
+CodoFileSchema = new Schema
+  path:     { type: String, index: true }
+  content:  { type: String }
+  live:     { type: Boolean, default: false }
+
+CodoProject = mongoose.model 'CodoProject', CodoProjectSchema
+CodoFile    = mongoose.model 'CodoFile', CodoFileSchema
 
 app    = express()
 socket = require 'socket.io'
@@ -23,6 +40,8 @@ app.configure ->
   app.use express.methodOverride()
   app.use app.router
 
+  app.locals = { codoVersion: Codo.version() }
+
   # Configure assets
   app.use require('connect-assets')()
   app.use '/images', express.static(path.join(__dirname, 'assets', 'images'))
@@ -32,9 +51,14 @@ app.configure 'development', ->
   app.use express.errorHandler({ dumpExceptions: true, showStack: true })
   app.queue = kue.createQueue()
 
+  mongoose.connect 'mongodb://localhost/coffeedoc'
+
 # Production settings
 app.configure 'production', ->
   app.use express.errorHandler()
+
+  # Setup MongoHQ
+  mongoose.connect "mongodb://nodejitsu:#{ process.env.MONGODB_PWD }@staff.mongohq.com:10090/nodejitsudb407113725252"
 
   # Configure RedisToGo
   kue.redis.createClient = ->
@@ -46,7 +70,8 @@ app.configure 'production', ->
 
 # Show coffeedoc.info homepage
 app.get '/', (req, res) ->
-  res.render 'index', { success: true, message: "Holla" }
+  CodoProject.find {}, (err, docs) ->
+    res.render 'index', { projects: docs }
 
 # Github checkout hook
 app.post '/checkout', (req, res) ->
@@ -79,7 +104,7 @@ io.sockets.on 'connection', (socket) ->
     job = app.queue.create('checkout', {
       title: "Generate Codo documentation for repository at #{ data.url } (#{ data.commit })"
       url: data.url
-      commit: data.commit
+      commit: data.commit || 'master'
     }).attempts(3).save()
 
     job.on 'progress', (progress) ->
