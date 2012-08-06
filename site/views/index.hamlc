@@ -65,7 +65,6 @@
       %form#checkout_form{ action: '/checkout', method: 'post' }
         %input#url.url{ type: 'text', name: 'url', placeholder: 'git://github.com/username/project' }
         .loadicon
-        %input#scheme{ type: 'hidden', name: 'scheme', value: 'git' }
         %br
         %small
           Commit (optional):

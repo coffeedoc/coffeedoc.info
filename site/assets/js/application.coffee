@@ -28,7 +28,6 @@ $(->
     $('#checkout').addClass 'loading'
 
     $.post '/checkout', {
-      scheme: $('#scheme').val()
       url: $('#url').val()
       commit: $('#commit').val()
     }, (data, status) ->

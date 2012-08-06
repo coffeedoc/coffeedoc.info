@@ -1,14 +1,15 @@
 {
   "name": "coffeedoc-queue",
   "author": "Michael Kessler <michi@netzpiraten.ch>",
-  "version": "0.1.0",
+  "version": "0.1.0-6",
   "scripts": {
     "start": "coffee app.coffee"
   },
   "dependencies": {
     "kue": "0.4.0",
     "redis": "0.7.2",
-    "codo": "0.9.1"
+    "codo": "0.9.1",
+    "temp": "0.4.0"
   },
   "analyze": false,
   "subdomain": "coffeedoc-queue",
