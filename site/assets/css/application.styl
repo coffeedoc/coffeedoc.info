@@ -258,18 +258,16 @@ a {
     background: url(/images/loading.gif);
   }
 
-  .error #url {
-    background: #fdd;
+  #message {
+    font-size: 10px;
+  }
+
+  .error #message {
+    color: #e00;
   }
 
   #commit {
     width: 131px;
-  }
-
-  .error:after {
-    content: "Invalid git repository or URL";
-    color: #e00;
-    display: block;
   }
 
   .loading .loadicon {

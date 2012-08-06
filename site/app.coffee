@@ -6,7 +6,9 @@ path    = require 'path'
 kue     = require 'kue'
 redis   = require 'redis'
 
-app = express()
+app    = express()
+socket = require 'socket.io'
+
 app.engine '.hamlc', require('haml-coffee').__express
 
 app.configure ->
@@ -44,23 +46,47 @@ app.configure 'production', ->
 
 # Show coffeedoc.info homepage
 app.get '/', (req, res) ->
-  res.render 'index'
+  res.render 'index', { success: true, message: "Holla" }
 
-# Enqueue a checkout job
+# Github checkout hook
 app.post '/checkout', (req, res) ->
-  url    = req.param 'url'
-  commit = req.param('commit') || 'master'
+  payload = JSON.parse req.param('payload')
 
-  console.log "Enque new GitHub project for repository #{ url } (#{ commit })"
+  unless payload.repository.private
+    url = payload.repository.url
+    commit = 'master'
 
-  app.queue.create('codo', {
-    title: "Generate Codo documentation for repository at #{ url } (#{ commit })"
-    url: url
-    commit: commit
-  }).attempts(3).save()
+    console.log "Enque new GitHub checkout for repository #{ url } (#{ commit })"
 
-  res.render 'index'
+    app.queue.create('codo', {
+      title: "Generate Codo documentation for repository at #{ url } (#{ commit })"
+      url: url
+      commit: commit
+    }).attempts(3).save()
+
+  res.send 'OK'
 
 # Start the express server
-http.createServer(app).listen app.get('port'), ->
+server = http.createServer(app).listen app.get('port'), ->
   console.log 'Express server listening on port %d in %s mode', app.get('port'), app.settings.env
+
+io = socket.listen server
+io.sockets.on 'connection', (socket) ->
+
+  # Checkout a new project
+  #
+  socket.on 'checkout', (data) ->
+    job = app.queue.create('checkout', {
+      title: "Generate Codo documentation for repository at #{ data.url } (#{ data.commit })"
+      url: data.url
+      commit: data.commit
+    }).attempts(3).save()
+
+    job.on 'progress', (progress) ->
+      socket.emit 'progress', { progress: progress }
+
+    job.on 'failed', ->
+      socket.emit 'failed'
+
+    job.on 'complete', ->
+      socket.emit 'complete'

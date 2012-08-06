@@ -1,7 +1,7 @@
 {
   "name": "coffeedoc-queue",
   "author": "Michael Kessler <michi@netzpiraten.ch>",
-  "version": "0.1.0-6",
+  "version": "0.1.0-7",
   "scripts": {
     "start": "coffee app.coffee"
   },
@@ -12,7 +12,7 @@
     "temp": "0.4.0"
   },
   "analyze": false,
-  "subdomain": "coffeedoc-queue",
+  "subdomain": "queue.coffeedoc",
   "engines": {
     "node": ">=0.4.0"
   }

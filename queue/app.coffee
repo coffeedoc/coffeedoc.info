@@ -23,7 +23,7 @@ if process.env.NODE_ENV is 'production'
 queue = kue.createQueue()
 
 # Generate Codo documentation
-queue.process 'codo', (job, done) ->
+queue.process 'checkout', (job, done) ->
   temp.mkdir 'codo', (err, path) ->
     if err
       done err
@@ -39,17 +39,23 @@ queue.process 'codo', (job, done) ->
 
         # Checkout revision
         else
+          job.progress 1, 3
           job.log "Checkout revision #{ job.data.commit }"
+
           exec "git checkout #{ job.data.commit }", (err) ->
             if err
               done err
 
             # Generate Codo documentation
             else
+              job.progress 2, 3
+
               try
                 job.log 'Generate Codo documentation'
                 codo  = require 'codo'
                 codo.run()
+
+                job.progress 3, 3
 
               catch err
                 done err

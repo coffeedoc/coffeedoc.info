@@ -1,4 +1,43 @@
 $(->
+
+  socket = io.connect()
+
+  # Update progress status
+  #
+  socket.on 'progress', (data) ->
+    $('#message').html "<p>Generating Codo documentation: #{ data.progress }%</p>"
+
+  # Checkout complete
+  #
+  socket.on 'complete', (data) ->
+    $('#checkout').removeClass 'loading'
+    $('#submit').attr 'disabled', false
+    $('#checkout').fadeOut 'fast'
+
+  # Checkout failed
+  #
+  socket.on 'failed', (data) ->
+    $('#checkout').addClass 'error'
+    $('#checkout').removeClass 'loading'
+    $('#submit').attr 'disabled', false
+
+  # Checkout new project
+  #
+  $('#checkout_form').submit ->
+
+    $('#submit').attr 'disabled', true
+    $('#checkout').addClass 'loading'
+    $('.loadicon').css 'display', 'block'
+
+    $('#message').html "<p>Generating Codo documentation: 0%</p>"
+
+    socket.emit 'checkout', {
+      url: $('#url').val()
+      commit: $('#commit').val()
+    }
+
+    false
+
   # Show the about box
   #
   $('a.about').click (event) ->
@@ -21,22 +60,4 @@ $(->
 
     event.preventDefault()
 
-  # Send checkout form
-  #
-  $('#checkout_form').submit ->
-    $('#submit').attr 'disabled', true
-    $('#checkout').addClass 'loading'
-
-    $.post '/checkout', {
-      url: $('#url').val()
-      commit: $('#commit').val()
-    }, (data, status) ->
-      if status is 'success'
-        $('.loadicon').css('display', 'block')
-      else
-        $('#checkout').removeClass 'loading'
-        $('#checkout').addClass 'error'
-        $('#submit').attr 'disabled', false
-
-    false
 )

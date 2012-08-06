@@ -3,9 +3,12 @@
   %head
     %title CoffeeDoc.info - Codo Documentation Server
     %link{ rel: 'shortcut icon', href: '/images/favicon.ico' }
+
     != js 'jquery'
     != js 'application'
     != css 'application'
+
+    %script{ src: '/socket.io/socket.io.js' }
 
   %body
     %a#learn_codo{ href: 'https://github.com/netzpirat/codo', title: 'Learn More About Codo' }
@@ -70,6 +73,7 @@
           Commit (optional):
           %input#commit{ type: 'text', name: 'commit', value: '', style: 'width: 122px;' }
           %input#submit{ type: 'submit', id: 'submit', value: 'Go' }
+      #message
 
     #content
       %h2 Github Projects
