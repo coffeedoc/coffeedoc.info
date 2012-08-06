@@ -91,11 +91,10 @@
     %a{ href: 'http://github.com/netzpirat/codo' } Codo
     x.y.z
     = surround '(Node.js ', ').', -> process.version
-
-    %p.sponsor
-      Developed by
-      %a{ href: 'https://github.com/netzpirat'} Michael Kessler
-      &#10034;
-      %a{ href: 'http://twitter.com/#!/netzpirat'} @netzpirat
-      &#10034;
-      %a{ href: 'https://mksoft.ch'} mksoft.ch
+    &#10034;
+    Developed by
+    %a{ href: 'https://github.com/netzpirat'} Michael Kessler
+    &#10034;
+    %a{ href: 'http://twitter.com/#!/netzpirat'} @netzpirat
+    &#10034;
+    %a{ href: 'https://mksoft.ch'} mksoft.ch
