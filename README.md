@@ -3,8 +3,6 @@
 Welcome to the [Codo](https://github.com/netzpirat/codo) documentation server as a service.
 You'll find me online at [http://www.coffeedoc.info](http://www.coffeedoc.info).
 
-**This is a prototype and under heavy development. It's not even working right now, so please come back later!**
-
 ## Development
 
 The app is hosted on [nodejitsu](http://nodejitsu.com/) and consists of two drones:

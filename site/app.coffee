@@ -9,19 +9,33 @@ mongoose = require 'mongoose'
 {Schema} = require 'mongoose'
 Codo     = require 'codo'
 
-CodoProjectSchema = new Schema
+# Production configuration
+if process.env.NODE_ENV is 'production'
+
+  # Setup MongoHQ
+  mongoose.connect "mongodb://nodejitsu:#{ process.env.MONGODB_PWD }@staff.mongohq.com:10090/nodejitsudb407113725252"
+
+  # Setup RedisToGo
+  kue.redis.createClient = ->
+    client = redis.createClient 9066, 'gar.redistogo.com', { no_ready_check: true }
+    client.auth process.env.REDIS_PWD
+    client
+
+else
+  mongoose.connect 'mongodb://localhost/coffeedoc'
+
+CodoProject = mongoose.model 'CodoProject', new Schema
   user:     { type: String }
   project:  { type: String }
   versions: { type: Array }
   updated:  { type: String }
 
-CodoFileSchema = new Schema
+CodoFile = mongoose.model 'CodoFile', new Schema
   path:     { type: String, index: true }
   content:  { type: String }
   live:     { type: Boolean, default: false }
 
-CodoProject = mongoose.model 'CodoProject', CodoProjectSchema
-CodoFile    = mongoose.model 'CodoFile', CodoFileSchema
+queue = kue.createQueue()
 
 app    = express()
 socket = require 'socket.io'
@@ -45,33 +59,69 @@ app.configure ->
   # Configure assets
   app.use require('connect-assets')()
   app.use '/images', express.static(path.join(__dirname, 'assets', 'images'))
+  app.use express.favicon path.join(__dirname, 'assets', 'images', 'favicon.ico')
 
 # Development settings
 app.configure 'development', ->
   app.use express.errorHandler({ dumpExceptions: true, showStack: true })
-  app.queue = kue.createQueue()
-
-  mongoose.connect 'mongodb://localhost/coffeedoc'
 
 # Production settings
 app.configure 'production', ->
   app.use express.errorHandler()
 
-  # Setup MongoHQ
-  mongoose.connect "mongodb://nodejitsu:#{ process.env.MONGODB_PWD }@staff.mongohq.com:10090/nodejitsudb407113725252"
-
-  # Configure RedisToGo
-  kue.redis.createClient = ->
-    client = redis.createClient 9066, 'gar.redistogo.com', { no_ready_check: true }
-    client.auth process.env.REDIS_PWD
-    client
-
-  app.queue = kue.createQueue()
-
 # Show coffeedoc.info homepage
 app.get '/', (req, res) ->
   CodoProject.find {}, (err, docs) ->
     res.render 'index', { projects: docs }
+
+# Serve Codo javascripts
+app.get /github\/(.+)\/assets\/codo\.js$/, (req, res) ->
+  res.header 'Content-Type', 'application/javascript'
+  res.send Codo.script()
+
+# Serve Codo stylesheets
+app.get /github\/(.+)\/assets\/codo\.css$/, (req, res) ->
+  res.header 'Content-Type', 'text/css'
+  res.send Codo.style()
+
+# Redirect to first version
+app.get '/github/:user/:project', (req, res) ->
+  user = req.params.user
+  project = req.params.project
+
+  CodoProject.findOne { user: user, project: project }, (err, doc) ->
+    throw err if err
+
+    if doc
+      res.redirect "/github/#{ user }/#{ project }/#{ doc.versions.shift() }/"
+    else
+      res.send 404
+
+# Show Codo generated files
+app.get /github\/(.+)$/, (req, res) ->
+  path = req.params[0]
+
+  # Provide index.html functionality
+  unless /(\.html|\.js|\.css)$/.test path
+    if /\/$/.test path
+      path += 'index.html'
+    else
+      return res.redirect "/github/#{ path }/"
+
+  # Detect content type
+  switch path
+    when /\/.js$/ then res.header 'Content-Type', 'application/javascript'
+    when /\/.css$/ then res.header 'Content-Type', 'text/css'
+    when /\/.html$/ then res.header 'Content-Type', 'text/html'
+
+  # Locate Codo file resource
+  CodoFile.findOne { path: path, live: true }, (err, doc) ->
+    throw err if err
+
+    if doc
+      res.send doc.content
+    else
+      res.send 404
 
 # Github checkout hook
 app.post '/checkout', (req, res) ->
@@ -83,7 +133,7 @@ app.post '/checkout', (req, res) ->
 
     console.log "Enque new GitHub checkout for repository #{ url } (#{ commit })"
 
-    app.queue.create('codo', {
+    queue.create('codo', {
       title: "Generate Codo documentation for repository at #{ url } (#{ commit })"
       url: url
       commit: commit
@@ -101,7 +151,7 @@ io.sockets.on 'connection', (socket) ->
   # Checkout a new project
   #
   socket.on 'checkout', (data) ->
-    job = app.queue.create('checkout', {
+    job = queue.create('checkout', {
       title: "Generate Codo documentation for repository at #{ data.url } (#{ data.commit })"
       url: data.url
       commit: data.commit || 'master'
