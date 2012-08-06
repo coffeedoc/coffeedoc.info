@@ -164,4 +164,8 @@ io.sockets.on 'connection', (socket) ->
       socket.emit 'failed'
 
     job.on 'complete', ->
-      socket.emit 'complete'
+      github = /^(?:https?|git):\/\/(?:www\.?)?github\.com\/([^\s/]+)\/([^\s/]+?)(?:\.git)?\/?$/
+      [url, user, project] = job.data.url.match github
+      commit = data.commit || 'master'
+
+      socket.emit 'complete', { url: "/github/#{ user }/#{ project }/#{ commit }/" }

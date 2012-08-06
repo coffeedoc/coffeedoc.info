@@ -16,6 +16,8 @@ $(->
     $('.loadicon').css 'display', 'none'
     $('#message').html "<p>Documentation has been generated.</p>"
 
+    location.href = data.url
+
   # Checkout failed
   #
   socket.on 'failed', (data) ->
