@@ -9,21 +9,6 @@ mongoose = require 'mongoose'
 {Schema} = require 'mongoose'
 Codo     = require 'codo'
 
-# Production configuration
-if process.env.NODE_ENV is 'production'
-
-  # Setup MongoHQ
-  mongoose.connect "mongodb://nodejitsu:#{ process.env.MONGODB_PWD }@staff.mongohq.com:10090/nodejitsudb407113725252"
-
-  # Setup RedisToGo
-  kue.redis.createClient = ->
-    client = redis.createClient 9066, 'gar.redistogo.com', { no_ready_check: true, parser: 'javascript' }
-    client.auth process.env.REDIS_PWD
-    client
-
-else
-  mongoose.connect 'mongodb://localhost/coffeedoc'
-
 CodoProject = mongoose.model 'CodoProject', new Schema
   user:     { type: String }
   project:  { type: String }
@@ -35,9 +20,8 @@ CodoFile = mongoose.model 'CodoFile', new Schema
   content:  { type: String }
   live:     { type: Boolean, default: false }
 
-queue = kue.createQueue()
+app = express()
 
-app    = express()
 socket = require 'socket.io'
 
 app.engine '.hamlc', require('haml-coffee').__express
@@ -64,10 +48,25 @@ app.configure ->
 # Development settings
 app.configure 'development', ->
   app.use express.errorHandler({ dumpExceptions: true, showStack: true })
+  mongoose.connect 'mongodb://localhost/coffeedoc'
+  app.queue = kue.createQueue()
 
 # Production settings
 app.configure 'production', ->
   app.use express.errorHandler()
+
+  # Setup MongoHQ
+  mongoose.connect "mongodb://nodejitsu:#{ process.env.MONGODB_PWD }@staff.mongohq.com:10090/nodejitsudb407113725252"
+
+  # Setup RedisToGo
+  kue.redis.createClient = ->
+    return app.redisclient if app.redisclient
+
+    app.redisclient = redis.createClient 9066, 'gar.redistogo.com', { no_ready_check: true, parser: 'javascript' }
+    app.redisclient.auth process.env.REDIS_PWD, -> console.log 'Authenicated with redistogo.com'
+    app.redisclient
+
+  app.queue = kue.createQueue()
 
 # Show coffeedoc.info homepage
 app.get '/', (req, res) ->
@@ -133,7 +132,7 @@ app.post '/checkout', (req, res) ->
 
     console.log "Enque new GitHub checkout for repository #{ url } (#{ commit })"
 
-    queue.create('codo', {
+    app.queue.create('codo', {
       title: "Generate Codo documentation for repository at #{ url } (#{ commit })"
       url: url
       commit: commit
@@ -141,18 +140,17 @@ app.post '/checkout', (req, res) ->
 
   res.send 'OK'
 
-# Start the express server
-server = http.createServer(app).listen app.get('port'), ->
-  console.log 'Express server listening on port %d in %s mode', app.get('port'), app.settings.env
+server = app.listen app.get('port'), -> console.log('Express server listening on port %s in %s mode', app.get('port'), app.settings.env)
+io = require('socket.io').listen server
 
-io = socket.listen server
 io.sockets.on 'connection', (socket) ->
 
   # Checkout a new project
   #
   socket.on 'checkout', (data) ->
-    job = queue.create('checkout', {
-      title: "Generate Codo documentation for repository at #{ data.url } (#{ data.commit })"
+
+    job = app.queue.create('checkout', {
+      title: "Generate Codo documentation for repository at #{ data.url } (#{ data.commit || 'master' })"
       url: data.url
       commit: data.commit || 'master'
     }).attempts(3).save()
