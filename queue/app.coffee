@@ -123,7 +123,12 @@ queue.process 'checkout', (job, done) ->
                     proj.user = user
                     proj.project = project
 
-                  proj.versions.push(commit) unless commit in proj.versions
+                  unless commit in proj.versions
+                    proj.versions.push(commit)
+                    master = proj.versions.filter (v) -> v is 'master'
+                    other  = proj.versions.filter (v) -> v isnt 'master'
+                    proj.versions = master.concat other.sort().reverse()
+
                   proj.updated = new Date()
 
                   proj.save (err, num) ->
