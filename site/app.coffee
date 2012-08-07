@@ -68,6 +68,13 @@ app.configure 'production', ->
 
   app.queue = kue.createQueue()
 
+# Redirect www to non-www
+app.get '/*', (req, res, next) ->
+  if /^www/.test req.headers.host
+    res.redirect "http://#{ req.headers.host.replace(/^www\./, '') + req.url }"
+  else
+  next()
+
 # Show coffeedoc.info homepage
 app.get '/', (req, res) ->
   CodoProject.find {}, (err, docs) ->
