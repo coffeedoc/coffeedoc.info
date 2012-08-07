@@ -53,7 +53,7 @@
           %a{ href: 'http://help.github.com/post-receive-hooks/' } post-receive hook
         Use
           != succeed '.', ->
-            %tt http://www.coffeedoc.info/checkout
+            %tt http://coffeedoc.info/checkout
       %p
         %small
           CoffeeDoc.info was made possible by
