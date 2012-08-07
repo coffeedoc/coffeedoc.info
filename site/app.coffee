@@ -20,10 +20,11 @@ CodoFile = mongoose.model 'CodoFile', new Schema
   content:  { type: String }
   live:     { type: Boolean, default: false }
 
+queue = null
+
+# Express application
+#
 app = express()
-
-socket = require 'socket.io'
-
 app.engine '.hamlc', require('haml-coffee').__express
 
 app.configure ->
@@ -46,12 +47,14 @@ app.configure ->
   app.use express.favicon path.join(__dirname, 'assets', 'images', 'favicon.ico')
 
 # Development settings
+#
 app.configure 'development', ->
   app.use express.errorHandler({ dumpExceptions: true, showStack: true })
   mongoose.connect 'mongodb://localhost/coffeedoc'
-  app.queue = kue.createQueue()
+  queue = kue.createQueue()
 
 # Production settings
+#
 app.configure 'production', ->
   app.use express.errorHandler()
 
@@ -60,50 +63,49 @@ app.configure 'production', ->
 
   # Setup RedisToGo
   kue.redis.createClient = ->
-    return app.redisclient if app.redisclient
+    client = redis.createClient 9066, 'gar.redistogo.com', { no_ready_check: true, parser: 'javascript' }
+    client.auth process.env.REDIS_PWD, -> console.log 'Authenicated with redistogo.com'
+    client
 
-    app.redisclient = redis.createClient 9066, 'gar.redistogo.com', { no_ready_check: true, parser: 'javascript' }
-    app.redisclient.auth process.env.REDIS_PWD, -> console.log 'Authenicated with redistogo.com'
-    app.redisclient
-
-  app.queue = kue.createQueue()
+  queue = kue.createQueue()
 
 # Redirect www to non-www
+#
 app.get '/*', (req, res, next) ->
   if /^www/.test req.headers.host
     res.redirect "http://#{ req.headers.host.replace(/^www\./, '') + req.url }"
   else
-  next()
+    next()
 
 # Show coffeedoc.info homepage
+#
 app.get '/', (req, res) ->
   CodoProject.find {}, ['user', 'project', 'versions'], { sort: { user: 1, project: 1 } }, (err, docs) ->
     res.render 'index', { projects: docs }
 
 # Serve Codo javascripts
+#
 app.get /github\/(.+)\/assets\/codo\.js$/, (req, res) ->
   res.header 'Content-Type', 'application/javascript'
   res.send Codo.script()
 
 # Serve Codo stylesheets
+#
 app.get /github\/(.+)\/assets\/codo\.css$/, (req, res) ->
   res.header 'Content-Type', 'text/css'
   res.send Codo.style()
 
 # Redirect to first version
+#
 app.get '/github/:user/:project', (req, res) ->
   user = req.params.user
   project = req.params.project
 
   CodoProject.findOne { user: user, project: project }, ['versions'], (err, doc) ->
-    throw err if err
-
-    if doc
-      res.redirect "/github/#{ user }/#{ project }/#{ doc.versions.shift() }/"
-    else
-      res.send 404
+    res.send if err then 404 else res.redirect "/github/#{ user }/#{ project }/#{ doc.versions.shift() }/"
 
 # Show Codo generated files
+#
 app.get /github\/(.+)$/, (req, res) ->
   path = req.params[0]
 
@@ -122,18 +124,12 @@ app.get /github\/(.+)$/, (req, res) ->
 
   # Locate Codo file resource
   CodoFile.findOne { path: path, live: true }, (err, doc) ->
-    throw err if err
-
-    if doc
-      res.send doc.content
-    else
-      res.send 404
+    res.send if err then 404 else doc.content
 
 # Github checkout hook
+#
 app.post '/checkout', (req, res) ->
   payload = JSON.parse req.param('payload')
-
-  console.log "New GitHub checkout received for #{ payload.repository.url }"
 
   unless payload.repository.private
     url = payload.repository.url
@@ -141,43 +137,37 @@ app.post '/checkout', (req, res) ->
 
     console.log "Enque new GitHub checkout for repository #{ url } (#{ commit })"
 
-    app.queue.create('codo', {
+    queue.create('checkout', {
       title: "Generate Codo documentation for repository at #{ url } (#{ commit })"
       url: url
       commit: commit
     }).attempts(3).save()
 
-  res.send 'OK'
+    res.send 200
+
+# Add project from the web page
+#
+app.post '/add', (req, res) ->
+  url =req.param('url')
+  commit = req.param('commit') || 'master'
+
+  console.log "New website checkout received for #{ url }"
+
+  job = queue.create('checkout', {
+    title: "Generate Codo documentation for repository at #{ url } (#{ commit })"
+    url: url
+    commit: commit
+  }).attempts(3).save (err) ->
+    res.send if err then 404 else "#{ job.id }"
+
+# Get the job status
+app.get '/state/:id', (req, res) ->
+  id = parseInt(req.param('id'), 10)
+  console.log "Get status for job #{ id }"
+
+  kue.Job.get id, (err, job) ->
+    res.send if err then 404 else job._state
 
 # Start the express server
 server = http.createServer(app).listen app.get('port'), ->
   console.log 'Express server listening on port %d in %s mode', app.get('port'), app.settings.env
-
-io = socket.listen server
-io.set 'log level', 2
-io.sockets.on 'connection', (socket) ->
-
-  # Checkout a new project
-  #
-  socket.on 'checkout', (data) ->
-
-    console.log "Received new Socket.io checkout for #{ data.url }"
-
-    job = app.queue.create('checkout', {
-      title: "Generate Codo documentation for repository at #{ data.url } (#{ data.commit || 'master' })"
-      url: data.url
-      commit: data.commit || 'master'
-    }).attempts(3).save()
-
-    job.on 'progress', (progress) ->
-      socket.emit 'progress', { progress: progress }
-
-    job.on 'failed', ->
-      socket.emit 'failed'
-
-    job.on 'complete', ->
-      github = /^(?:https?|git):\/\/(?:www\.?)?github\.com\/([^\s/]+)\/([^\s/]+?)(?:\.git)?\/?$/
-      [url, user, project] = job.data.url.match github
-      commit = data.commit || 'master'
-
-      socket.emit 'complete', { url: "/github/#{ user }/#{ project }/#{ commit }/" }

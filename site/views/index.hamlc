@@ -8,8 +8,6 @@
     != js 'application'
     != css 'application'
 
-    %script{ src: '/socket.io/socket.io.js' }
-
     :javascript
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-33919772-1']);
@@ -76,7 +74,7 @@
     #checkout
       %h2 Add your own project
       %small.example (eg. git://github.com/netzpirat/codo.git)
-      %form#checkout_form{ action: '/checkout', method: 'post' }
+      %form#checkout_form{ action: '/add', method: 'post' }
         %input#url.url{ type: 'text', name: 'url', placeholder: 'git://github.com/username/project' }
         .loadicon
         %br

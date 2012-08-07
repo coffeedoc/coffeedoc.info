@@ -8,8 +8,8 @@ kue      = require 'kue'
 redis    = require 'redis'
 temp     = require 'temp'
 mongoose = require 'mongoose'
-{exec}   = require 'child_process'
 {Schema} = require 'mongoose'
+{exec}   = require 'child_process'
 Codo     = require 'codo'
 rimraf   = require 'rimraf'
 
@@ -72,14 +72,12 @@ queue.process 'checkout', (job, done) ->
 
       exec "git clone #{ url } .", (err) ->
         throw err if err
-        job.progress 1, 3
 
         # Checkout revision
         jobLog "Checkout revision #{ commit }"
 
         exec "git checkout #{ commit }", (err) ->
           throw err if err
-          job.progress 2, 3
 
           # Generate Codo documentation
           jobLog 'Generate Codo documentation'
@@ -136,7 +134,6 @@ queue.process 'checkout', (job, done) ->
 
                     jobLog "Project saved"
 
-                    job.progress 3, 3
                     done()
 
                     rimraf path, ->

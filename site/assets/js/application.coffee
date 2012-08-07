@@ -1,31 +1,39 @@
 $(->
 
-  socket = io.connect()
-
-  # Update progress status
+  # Wait until docs have been completed
   #
-  socket.on 'progress', (data) ->
-    $('#message').html "<p>Generating Codo documentation: #{ data.progress }%</p>"
+  waitForDocs = (id, url) ->
+    $.ajax
+      url: "/state/#{ id }",
+      timeout: 2000
+      success: (data) ->
+        if data is 'complete'
+          docsComplete(url)
+        else if data is 'failed'
+          docsFailed()
+        else
+          setTimeout (-> waitForDocs(id, url)), 500
 
-  # Checkout complete
+  # Generation complete complete
   #
-  socket.on 'complete', (data) ->
+  docsComplete = (url) ->
     $('#checkout').removeClass 'loading'
     $('#submit').attr 'disabled', false
     $('#checkout').fadeOut 'fast'
     $('.loadicon').css 'display', 'none'
     $('#message').html "<p>Documentation has been generated.</p>"
 
-    location.href = data.url
+    location.href = url
 
-  # Checkout failed
+  # Document generation failed
   #
-  socket.on 'failed', (data) ->
+  docsFailed = (msg = '<p>Failed to generate the documentation.</p>') ->
     $('#checkout').addClass 'error'
     $('#checkout').removeClass 'loading'
     $('#submit').attr 'disabled', false
     $('.loadicon').css 'display', 'none'
-    $('#message').html "<p>Failed to generate the documentation!</p>"
+    $('#message').html msg
+    $('#message').fadeIn().fadeOut().fadeIn()
 
   # Checkout new project
   #
@@ -35,12 +43,24 @@ $(->
     $('#checkout').addClass 'loading'
     $('.loadicon').css 'display', 'block'
 
-    $('#message').html "<p>Generating Codo documentation: 0%</p>"
+    url = $('#url').val().trim()
+    commit = $('#commit').val() || 'master'
 
-    socket.emit 'checkout', {
-      url: $('#url').val()
-      commit: $('#commit').val()
-    }
+    [repo, user, project] = url.match /^(?:https?|git):\/\/(?:www\.?)?github\.com\/([^\s/]+)\/([^\s/]+?)(?:\.git)?\/?$/
+    console.log repo, user, project
+
+    if repo
+      xhr = $.post('/add', {
+        url: repo
+        commit: commit
+      }).success((data) ->
+        $('.loadicon').css('display', 'block')
+        $('#message').html "<p>Generating Codo documentation...</p>"
+        waitForDocs parseInt(data, 10), "/github/#{ user }/#{ project }/#{ commit }"
+      ).error docsFailed
+
+    else
+      docsFailed '<p>The GitHub repository URL is not valid!</p>'
 
     false
 
@@ -70,6 +90,8 @@ $(->
 
     event.preventDefault()
 
+  # Create the library stripes
+  #
   $('.libraries li').each (i, el) ->
     if i % 2 is 0 then $(el).addClass('stripe') else $(el).removeClass('stripe')
 
