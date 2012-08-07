@@ -8,7 +8,7 @@
   "dependencies": {
     "kue": "0.4.0",
     "redis": "0.7.2",
-    "codo": "0.9.1",
+    "codo": "1.0.1",
     "temp": "0.4.0",
     "mongoose": "2.7.3",
     "rimraf": "2.0.2"

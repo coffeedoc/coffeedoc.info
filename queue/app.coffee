@@ -136,7 +136,7 @@ queue.process 'checkout', (job, done) ->
 
                     rimraf path, ->
 
-          Codo.run finish, file
+          Codo.run finish, file, 'UA-33919772-1', { name: 'CoffeeDoc.info', href: '/', target: '_top' }
 
   catch error
     job.log error.message
