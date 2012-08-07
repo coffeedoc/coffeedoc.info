@@ -29,8 +29,8 @@ else
   mongoose.connect 'mongodb://localhost/coffeedoc'
 
 CodoProject = mongoose.model 'CodoProject', new Schema
-  user:     { type: String }
-  project:  { type: String }
+  user:     { type: String, index: true }
+  project:  { type: String, index: true }
   versions: { type: Array }
   updated:  { type: String }
 

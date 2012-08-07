@@ -10,8 +10,8 @@ mongoose = require 'mongoose'
 Codo     = require 'codo'
 
 CodoProject = mongoose.model 'CodoProject', new Schema
-  user:     { type: String }
-  project:  { type: String }
+  user:     { type: String, index: true }
+  project:  { type: String, index: true }
   versions: { type: Array }
   updated:  { type: String }
 
@@ -77,7 +77,7 @@ app.get '/*', (req, res, next) ->
 
 # Show coffeedoc.info homepage
 app.get '/', (req, res) ->
-  CodoProject.find {}, (err, docs) ->
+  CodoProject.find {}, ['user', 'project', 'versions'], { sort: { user: 1, project: 1 } }, (err, docs) ->
     res.render 'index', { projects: docs }
 
 # Serve Codo javascripts
@@ -95,7 +95,7 @@ app.get '/github/:user/:project', (req, res) ->
   user = req.params.user
   project = req.params.project
 
-  CodoProject.findOne { user: user, project: project }, (err, doc) ->
+  CodoProject.findOne { user: user, project: project }, ['versions'], (err, doc) ->
     throw err if err
 
     if doc
