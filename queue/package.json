@@ -1,7 +1,7 @@
 {
   "name": "coffeedoc-queue",
   "author": "Michael Kessler <michi@netzpiraten.ch>",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "scripts": {
     "start": "coffee app.coffee"
   },
