@@ -1,8 +1,12 @@
 !!!
-%html
+%html{ lang: 'en' }
   %head
     %title CoffeeDoc.info - Codo Documentation Server
     %link{ rel: 'shortcut icon', href: '/images/favicon.ico' }
+    %meta{ charset: 'utf-8' }
+    %meta{ :charset => 'en', 'http-equiv' => 'content-language' }
+    %meta{ charset: 'CoffeeScript API documentation generator as a service', name: 'description' }
+    %meta{ charset: 'CoffeeScript, documentation, API, service, online', name: 'keywords' }
 
     != js 'jquery'
     != js 'application'
