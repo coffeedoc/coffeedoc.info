@@ -123,6 +123,6 @@
     %a{ href: 'http://github.com/netzpirat/codo' } Codo
     = @codoVersion
     = surround '(Node.js ', ').', -> process.version
-    &#10034;
-    Sponsored by
-    %a{ href: 'https://mksoft.ch'} mksoft.ch
+    .sponsored
+      Sponsored by
+      %a{ href: 'https://mksoft.ch'} mksoft.ch

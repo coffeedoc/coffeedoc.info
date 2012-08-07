@@ -21,7 +21,8 @@ a {
   list-style: none;
   padding: 0;
 
-  li { font-size: 1.2em;
+  li {
+    font-size: 1.2em;
     line-height: 1.4em;
     padding: 3px 5px;
   }
@@ -60,7 +61,7 @@ a {
   }
 
   li:hover {
-    background: #eef;
+    background: #eef !important;
   }
 
   li.alternate, li.alternate:hover {
@@ -308,7 +309,11 @@ a {
   text-align: center;
   padding: 7px 0;
   color: #999;
-  font-size: 11px;
+  font-size: 0.9em;
+
+  .sponsored {
+    margin-top: 10px;
+  }
 }
 
 #footer a:link, #footer a:visited {
