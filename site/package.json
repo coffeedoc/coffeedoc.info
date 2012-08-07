@@ -1,7 +1,7 @@
 {
   "name": "coffeedoc-site",
   "author": "Michael Kessler <michi@netzpiraten.ch>",
-  "version": "0.5.1-4",
+  "version": "0.6.0",
   "scripts": {
     "start": "coffee app.coffee"
   },
@@ -13,7 +13,6 @@
     "kue": "0.4.0",
     "redis": "0.7.2",
     "codo": "1.0.1",
-    "socket.io": "0.9.9",
     "mongoose": "2.7.3"
   },
   "analyze": false,
