@@ -21,9 +21,11 @@ if process.env.NODE_ENV is 'production'
 
   # Setup RedisToGo
   kue.redis.createClient = ->
-    client = redis.createClient 9066, 'gar.redistogo.com', { no_ready_check: true, parser: 'javascript' }
-    client.auth process.env.REDIS_PWD, -> console.log 'Authenicated with redistogo.com'
-    client
+    return kue.redisclient if kue.redisclient
+
+    kue.redisclient = redis.createClient 9066, 'gar.redistogo.com', { no_ready_check: true, parser: 'javascript' }
+    kue.redisclient.auth process.env.REDIS_PWD, -> console.log 'Authenicated with redistogo.com'
+    kue.redisclient
 
 else
   mongoose.connect 'mongodb://localhost/coffeedoc'
