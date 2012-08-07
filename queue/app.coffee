@@ -21,7 +21,7 @@ if process.env.NODE_ENV is 'production'
 
   # Setup RedisToGo
   kue.redis.createClient = ->
-    client = redis.createClient 9066, 'gar.redistogo.com', { no_ready_check: true }
+    client = redis.createClient 9066, 'gar.redistogo.com', { no_ready_check: true, parser: 'javascript' }
     client.auth process.env.REDIS_PWD
     client
 
