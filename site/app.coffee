@@ -133,6 +133,8 @@ app.get /github\/(.+)$/, (req, res) ->
 app.post '/checkout', (req, res) ->
   payload = JSON.parse req.param('payload')
 
+  console.log "New GitHub checkout received for #{ payload.repository.url }"
+
   unless payload.repository.private
     url = payload.repository.url
     commit = 'master'
@@ -147,14 +149,19 @@ app.post '/checkout', (req, res) ->
 
   res.send 'OK'
 
-server = app.listen app.get('port'), -> console.log('Express server listening on port %s in %s mode', app.get('port'), app.settings.env)
-io = require('socket.io').listen server
+# Start the express server
+server = http.createServer(app).listen app.get('port'), ->
+  console.log 'Express server listening on port %d in %s mode', app.get('port'), app.settings.env
 
+io = socket.listen server
+io.set 'log level', 2
 io.sockets.on 'connection', (socket) ->
 
   # Checkout a new project
   #
   socket.on 'checkout', (data) ->
+
+    console.log "Received new Socket.io checkout for #{ data.url }"
 
     job = app.queue.create('checkout', {
       title: "Generate Codo documentation for repository at #{ data.url } (#{ data.commit || 'master' })"
