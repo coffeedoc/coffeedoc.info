@@ -124,8 +124,5 @@
     = @codoVersion
     = surround '(Node.js ', ').', -> process.version
     &#10034;
-    Report bugs on
-    %a{ href: 'https://github.com/netzpirat/coffeedoc.info/issues' } GitHub Issues
-    &#10034;
     Sponsored by
     %a{ href: 'https://mksoft.ch'} mksoft.ch
