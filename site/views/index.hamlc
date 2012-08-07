@@ -23,6 +23,8 @@
     %a#learn_codo{ href: 'https://github.com/netzpirat/codo', title: 'Learn More About Codo' }
       %img{ src: '/images/learn.png' }
 
+    %img#beta{ src: '/images/beta.png' }
+
     #logo
       %h1
         %a{ href: '/' } CoffeeDoc.info
@@ -85,6 +87,7 @@
       #message
 
     #teaser
+
       %p
         Welcome to CoffeeDoc.info, a site devoted to generate and serve nice API documentation for
         %a{ href: '' } CoffeeScript

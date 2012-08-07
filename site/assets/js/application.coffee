@@ -12,7 +12,8 @@ $(->
         else if data is 'failed'
           docsFailed()
         else
-          setTimeout (-> waitForDocs(id, url)), 500
+          setTimeout (-> waitForDocs(id, url)), 1000
+      error: -> setTimeout (-> waitForDocs(id, url)), 1000
 
   # Generation complete complete
   #
@@ -56,7 +57,7 @@ $(->
       }).success((data) ->
         $('.loadicon').css('display', 'block')
         $('#message').html "<p>Generating Codo documentation...</p>"
-        waitForDocs parseInt(data, 10), "/github/#{ user }/#{ project }/#{ commit }"
+        setTimeout (-> waitForDocs parseInt(data, 10), "/github/#{ user }/#{ project }/#{ commit }"), 1000
       ).error docsFailed
 
     else

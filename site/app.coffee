@@ -162,11 +162,16 @@ app.post '/add', (req, res) ->
 
 # Get the job status
 app.get '/state/:id', (req, res) ->
-  id = parseInt(req.param('id'), 10)
-  console.log "Get status for job #{ id }"
+  try
+    id = parseInt(req.param('id'), 10)
+    console.log "Get status for job #{ id }"
 
-  kue.Job.get id, (err, job) ->
-    res.send if err then 404 else job._state
+    kue.Job.get id, (err, job) ->
+      res.send if err then 404 else job._state
+
+  # Redis max connection reached
+  catch err
+    res.send 'unknown'
 
 # Start the express server
 server = http.createServer(app).listen app.get('port'), ->
