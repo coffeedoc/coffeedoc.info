@@ -1,16 +1,20 @@
 {
   "name": "coffeedoc-queue",
   "author": "Michael Kessler <michi@netzpiraten.ch>",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "scripts": {
-    "start": "coffee app.coffee"
+    "start": "coffee server.coffee"
   },
   "dependencies": {
-    "kue": "0.4.0",
+    "express": "3.0.x",
+    "connect-assets": "2.3.1",
+    "haml-coffee": "1.4.1",
+    "stylus": "0.28.2",
+    "coffee-resque": "0.1.7",
     "redis": "0.7.2",
     "codo": "1.0.1",
-    "temp": "0.4.0",
     "mongoose": "2.7.3",
+    "temp": "0.4.0",
     "rimraf": "2.0.2"
   },
   "analyze": false,

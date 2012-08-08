@@ -1,0 +1,84 @@
+!!!
+%html{ lang: 'en' }
+  %head
+    %title CoffeeDoc.info - Codo Documentation Server Jobs Queue
+    %link{ rel: 'shortcut icon', href: '/images/favicon.ico' }
+    %meta{ charset: 'utf-8' }
+    %meta{ :charset => 'en', 'http-equiv' => 'content-language' }
+    %meta{ charset: 'CoffeeScript API documentation generator jobs queue', name: 'description' }
+    %meta{ charset: 'CoffeeScript, documentation, API, service, online', name: 'keywords' }
+
+    != js 'jquery'
+    != js 'application'
+    != css 'application'
+
+  %body
+    %a#learn_codo{ href: 'https://github.com/netzpirat/codo', title: 'Learn More About Codo' }
+      %img{ src: '/images/learn.png' }
+
+    %img#beta{ src: '/images/beta.png' }
+
+    #logo
+      %h1
+        %a{ href: '/' } CoffeeDoc.info
+        %small Codo Documentation Server Jobs Queue
+
+    #content
+      %h2 Queued jobs
+      %ul.jobs
+        - if @queued.length is 0
+          %li No jobs are waiting the queue.
+        - else
+          - for job in @queued
+            %li
+              %a{ href: job.url }= job.url
+              %small
+                != surround '(', ')', ->
+                  %span<>= job.commit
+
+      %h2 In progress jobs
+      %ul.jobs
+        - if @progress.length is 0
+          %li No jobs are in progress.
+        - else
+          - for job in @progress
+            %li
+              %a{ href: job.url }= job.url
+              %small
+                != surround '(', ')', ->
+                  %span<>= job.commit
+
+      %h2 Succeed jobs
+      %ul.jobs
+        - if @succeed.length is 0
+          %li No jobs have succeed.
+        - else
+          - for job in @succeed
+            %li
+              %a{ href: job.url }= job.url
+              %small
+                != surround '(', ')', ->
+                  %span<>= job.commit
+
+      %h2 Failed jobs
+      %ul.jobs
+        - if @failed.length is 0
+          %li No jobs have failed.
+        - else
+          - for job in @failed
+            %li
+              %a{ href: job.url }= job.url
+              %small
+                != surround '(', ')', ->
+                  %span<>= job.commit
+
+
+  #footer
+    %a{ href: 'http://github.com/netzpirat/coffeedoc.info' } CoffeeDoc.info
+    is powered by
+    %a{ href: 'http://github.com/netzpirat/codo' } Codo
+    = @codoVersion
+    = surround '(Node.js ', ').', -> process.version
+    .sponsored
+      Sponsored by
+      %a{ href: 'https://mksoft.ch'} mksoft.ch

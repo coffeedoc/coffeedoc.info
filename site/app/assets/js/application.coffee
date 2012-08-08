@@ -2,18 +2,23 @@ $(->
 
   # Wait until docs have been completed
   #
-  waitForDocs = (id, url) ->
+  waitForDocs = (repo, commit, id, url) ->
     $.ajax
-      url: "/state/#{ id }",
+      url: '/state',
+      data: {
+        id: id
+        url: repo
+        commit: commit
+      }
       timeout: 2000
       success: (data) ->
-        if data is 'complete'
+        if data is 'completed'
           docsComplete(url)
         else if data is 'failed'
           docsFailed()
         else
-          setTimeout (-> waitForDocs(id, url)), 1000
-      error: -> setTimeout (-> waitForDocs(id, url)), 1000
+          setTimeout (-> waitForDocs(repo, commit, id, url)), 1000
+      error: -> setTimeout (-> waitForDocs(repo, commit, id, url)), 1000
 
   # Generation complete complete
   #
@@ -57,7 +62,7 @@ $(->
       }).success((data) ->
         $('.loadicon').css('display', 'block')
         $('#message').html "<p>Generating Codo documentation...</p>"
-        setTimeout (-> waitForDocs parseInt(data, 10), "/github/#{ user }/#{ project }/#{ commit }"), 1000
+        setTimeout (-> waitForDocs repo, commit, data, "/github/#{ user }/#{ project }/#{ commit }"), 1000
       ).error docsFailed
 
     else
