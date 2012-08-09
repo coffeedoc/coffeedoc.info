@@ -13,26 +13,8 @@ else
   Mongoose.connect 'mongodb://localhost/coffeedoc'
 
 # Attach jobs
-Resque   = require './app/resque'
-CodoJobs = require './app/jobs/codo'
-
-resque = Resque.instance()
-worker = resque.worker('codo', CodoJobs)
-
-worker.on 'job', (worker, queue, job) ->
-  resque.redis.sadd 'codo:working', JSON.stringify(job)
-
-worker.on 'error', (err, worker, queue, job) ->
-  job = JSON.stringify(job)
-  resque.redis.srem 'codo:working', job
-  resque.redis.sadd 'codo:failed',  job
-
-worker.on 'success', (worker, queue, job) ->
-  job = JSON.stringify(job)
-  resque.redis.srem 'codo:working', job
-  resque.redis.sadd 'codo:success', job
-
-worker.start()
+Resque = require './app/resque'
+Resque.work()
 
 # Start queue monitor app
 Application = require('./app/application')

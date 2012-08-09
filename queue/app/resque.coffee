@@ -1,4 +1,5 @@
 CoffeeResque = require 'coffee-resque'
+CodoJobs     = require './jobs/codo'
 
 # Singleton Resque acessor
 #
@@ -25,21 +26,34 @@ module.exports = class Resque
 
     resque
 
-  # Decode a Redis result set with Jobs.
+  # Start a worker on the jobs.
   #
-  # @param [Array<String>] the redis result set
-  # @return [Array<Object>] the decoded result
-  #
-  @decode: (results) ->
-    return null unless results
+  @work: ->
+    resque = Resque.instance()
+    worker = resque.worker('codo', CodoJobs)
 
-    jobs = for result in results
-      data = JSON.parse result
-      {
-        id:  data.args[0]
-        url: data.args[1]
-        commit:  data.args[2]
-      }
+    worker.on 'job', (worker, queue, job) ->
+      job = JSON.stringify(job)
+      job.start = new Date()
+
+      resque.redis.sadd 'codo:working', job
+
+    worker.on 'error', (err, worker, queue, job) ->
+      job = JSON.stringify(job)
+      job.end = new Date()
+      job.error = err.message
+
+      resque.redis.srem 'codo:working', job
+      resque.redis.sadd 'codo:failed',  job
+
+    worker.on 'success', (worker, queue, job) ->
+      job = JSON.stringify(job)
+      job.end = new Date()
+
+      resque.redis.srem 'codo:working', job
+      resque.redis.sadd 'codo:success', job
+
+    worker.start()
 
   # Get the queued Jobs
   #
@@ -73,3 +87,20 @@ module.exports = class Resque
     Resque.instance().redis.smembers 'codo:failed', (err, results) ->
       callback err, Resque.decode(results)
 
+  # Decode a Redis result set with Jobs.
+  #
+  # @param [Array<String>] the redis result set
+  # @return [Array<Object>] the decoded result
+  #
+  # @private
+  #
+  @decode: (results) ->
+    return null unless results
+
+    jobs = for result in results
+      data = JSON.parse result
+      {
+      id:  data.args[0]
+      url: data.args[1]
+      commit:  data.args[2]
+      }
