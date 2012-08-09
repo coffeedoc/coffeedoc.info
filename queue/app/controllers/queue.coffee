@@ -15,7 +15,6 @@ module.exports = class QueueController
       failed: Resque.failed
     },
     (err, results) ->
-      console.log results
       res.render 'index', {
         queued:   results.queued
         working: results.working
