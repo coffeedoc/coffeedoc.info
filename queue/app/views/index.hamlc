@@ -1,3 +1,15 @@
+- jobs = (title, jobs) ->
+  %h2= title
+  %ul.jobs
+    - if jobs.length is 0
+      %li No jobs are waiting the queue.
+    - else
+      - for job in jobs
+        %li
+          %a{ href: job.url }= job.url
+          %small
+            != surround '(', ')', ->
+              %span<>= job.commit
 !!!
 %html{ lang: 'en' }
   %head
@@ -24,54 +36,10 @@
         %small Codo Documentation Server Jobs Queue
 
     #content
-      %h2 Queued jobs
-      %ul.jobs
-        - if @queued.length is 0
-          %li No jobs are waiting the queue.
-        - else
-          - for job in @queued
-            %li
-              %a{ href: job.url }= job.url
-              %small
-                != surround '(', ')', ->
-                  %span<>= job.commit
-
-      %h2 In progress jobs
-      %ul.jobs
-        - if @progress.length is 0
-          %li No jobs are in progress.
-        - else
-          - for job in @progress
-            %li
-              %a{ href: job.url }= job.url
-              %small
-                != surround '(', ')', ->
-                  %span<>= job.commit
-
-      %h2 Succeed jobs
-      %ul.jobs
-        - if @succeed.length is 0
-          %li No jobs have succeed.
-        - else
-          - for job in @succeed
-            %li
-              %a{ href: job.url }= job.url
-              %small
-                != surround '(', ')', ->
-                  %span<>= job.commit
-
-      %h2 Failed jobs
-      %ul.jobs
-        - if @failed.length is 0
-          %li No jobs have failed.
-        - else
-          - for job in @failed
-            %li
-              %a{ href: job.url }= job.url
-              %small
-                != surround '(', ')', ->
-                  %span<>= job.commit
-
+      != jobs 'Queued jobs',  @queued
+      != jobs 'Working jobs', @working
+      != jobs 'Succeed jobs', @succeed
+      != jobs 'Failed jobs',  @failed
 
   #footer
     %a{ href: 'http://github.com/netzpirat/coffeedoc.info' } CoffeeDoc.info

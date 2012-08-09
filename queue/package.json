@@ -15,7 +15,8 @@
     "codo": "1.0.1",
     "mongoose": "2.7.3",
     "temp": "0.4.0",
-    "rimraf": "2.0.2"
+    "rimraf": "2.0.2",
+    "async": "0.1.22"
   },
   "analyze": false,
   "subdomain": "queue.coffeedoc",
