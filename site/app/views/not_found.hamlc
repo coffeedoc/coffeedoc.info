@@ -1,0 +1,53 @@
+!!!
+%html{ lang: 'en' }
+  %head
+    %title CoffeeDoc.info - Codo Documentation Server
+    %link{ rel: 'shortcut icon', href: '/images/favicon.ico' }
+    %meta{ charset: 'utf-8' }
+    %meta{ :charset => 'en', 'http-equiv' => 'content-language' }
+    %meta{ charset: 'CoffeeScript API documentation generator as a service', name: 'description' }
+    %meta{ charset: 'CoffeeScript, documentation, API, service, online', name: 'keywords' }
+
+    != js 'jquery'
+    != js 'application'
+    != css 'application'
+
+    :javascript
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-33919772-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+  %body
+    %a#learn_codo{ href: 'https://github.com/netzpirat/codo', title: 'Learn More About Codo' }
+      %img{ src: '/images/learn.png' }
+
+    %img#beta{ src: '/images/beta.png' }
+
+    #logo
+      %h1
+        %a{ href: '/' } CoffeeDoc.info
+        %small Codo Documentation Server
+
+    %ul#top_nav
+      %li
+        %a.new_checkout{ href: '#' } Add Project
+      %li
+        %a.about{ href: '#' } About
+
+  .not_found
+    %strong
+      404
+    .oops
+      Oops - the document was not found.
+    %small
+      If you are the project owner, please test it locally with
+      %a{ href: 'https://github.com/netzpirat/codo' } Codo
+      and file an issue at
+      - precede '.', ->
+        %a{ href: 'https://github.com/netzpirat/codo/issues' } GitHub

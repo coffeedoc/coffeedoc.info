@@ -25,8 +25,6 @@ module.exports = class Application
     @app.configure 'development', @development
     @app.configure 'production',  @production
 
-    @routes()
-
   # Start the application server
   #
   # @return [http.Server] the HTTP server
@@ -49,12 +47,13 @@ module.exports = class Application
 
     @app.use Express.bodyParser()
     @app.use Express.methodOverride()
-    @app.use @app.router
 
     # Configure assets
     @app.use new Assets({ src: Path.join(__dirname, 'assets') })
     @app.use '/images', Express.static Path.join(__dirname, 'assets', 'images')
     @app.use Express.favicon Path.join(__dirname, 'assets', 'images', 'favicon.ico')
+
+    @routes()
 
   # Development configuration
   #
@@ -91,3 +90,5 @@ module.exports = class Application
     @app.get  /github\/(.+)$/,          CodoController.show
 
     @app.post '/checkout', GitHubController.checkout
+
+    @app.get '*', CoffeeDocController.notFound

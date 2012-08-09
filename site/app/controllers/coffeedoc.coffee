@@ -54,3 +54,8 @@ module.exports = class CoffeeDocController
       res.redirect "http://#{ req.headers.host.replace(/^www\./, '') + req.url }"
     else
       next()
+
+  # Show a 404 page
+  #
+  @notFound: (req, res) ->
+    res.render 'not_found', { url: req.url }
