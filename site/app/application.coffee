@@ -79,10 +79,10 @@ module.exports = class Application
   # Attach the application routes to the controllers.
   #
   routes: =>
-    @app.get  '/*',        CoffeeDocController.redirect
-    @app.get  '/',         CoffeeDocController.index
-    @app.post '/add',      CoffeeDocController.add
-    @app.get  '/state',    CoffeeDocController.state
+    @app.get  '/*',         CoffeeDocController.redirect
+    @app.get  '/',          CoffeeDocController.index
+    @app.post '/add',       CoffeeDocController.add
+    @app.get  '/state/:id', CoffeeDocController.state
 
     @app.get  /github\/(.+)\/assets\/codo\.js$/,  CodoController.script
     @app.get  /github\/(.+)\/assets\/codo\.css$/, CodoController.style

@@ -21,3 +21,18 @@ module.exports = class QueueController
         succeed:  results.succeed
         failed:   results.failed
       }
+
+  # Clear the working queue.
+  #
+  @clearWorking: (req, res) ->
+    Resque.clearWorking (err) -> res.send if err then 500 else 200
+
+  # Clear the succeed queue.
+  #
+  @clearSucceed:  (req, res) ->
+    Resque.clearSucceed (err) -> res.send if err then 500 else 200
+
+  # Clear the failed queue.
+  #
+  @clearFailed:  (req, res) ->
+    Resque.clearFailed (err) -> res.send if err then 500 else 200

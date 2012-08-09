@@ -1,5 +1,7 @@
+Async  = require 'async'
+_      = require 'underscore'
+
 CoffeeResque = require 'coffee-resque'
-CodoJobs     = require './jobs/codo'
 
 # Singleton Resque acessor
 #
@@ -26,32 +28,45 @@ module.exports = class Resque
 
     resque
 
+  # Adds a new job to the queue. Simple
+  # wrapper arround coffee-resque enqueue
+  # that adds a job id.
+  #
+  # @param [String] worker the job name
+  # @param [String] job the job function name
+  # @param [Array] args the job arguments
+  # @return [String] the job id
+  #
+  @enqueue: (worker, job, args) ->
+    id = Resque.createJobId()
+    args.unshift id
+    Resque.instance().enqueue worker, job, args
+
+    id
+
   # Start a worker on the jobs.
   #
   @work: ->
     resque = Resque.instance()
+    CodoJobs = require './jobs/codo'
     worker = resque.worker('codo', CodoJobs)
 
     worker.on 'job', (worker, queue, job) ->
-      job = JSON.stringify(job)
-      job.start = new Date()
-
-      resque.redis.sadd 'codo:working', job
+      job.start = new Date().toGMTString()
+      resque.redis.sadd 'codo:working', JSON.stringify(job)
 
     worker.on 'error', (err, worker, queue, job) ->
-      job = JSON.stringify(job)
-      job.end = new Date()
-      job.error = err.message
+      resque.redis.srem 'codo:working', JSON.stringify(job)
 
-      resque.redis.srem 'codo:working', job
-      resque.redis.sadd 'codo:failed',  job
+      job.end = new Date().toGMTString()
+      job.error = err.message
+      resque.redis.sadd 'codo:failed',  JSON.stringify(job)
 
     worker.on 'success', (worker, queue, job) ->
-      job = JSON.stringify(job)
-      job.end = new Date()
+      resque.redis.srem 'codo:working', JSON.stringify(job)
 
-      resque.redis.srem 'codo:working', job
-      resque.redis.sadd 'codo:success', job
+      job.end = new Date().toGMTString()
+      resque.redis.sadd 'codo:success', JSON.stringify(job)
 
     worker.start()
 
@@ -87,6 +102,58 @@ module.exports = class Resque
     Resque.instance().redis.smembers 'codo:failed', (err, results) ->
       callback err, Resque.decode(results)
 
+  # Clear the working queue.
+  #
+  # @param [Function] callback the result callback
+  #
+  @clearWorking: (callback) ->
+    Resque.instance().redis.del 'codo:working', (err) -> callback err
+
+  # Clear the succeed queue.
+  #
+  # @param [Function] callback the result callback
+  #
+  @clearSucceed: (callback) ->
+    Resque.instance().redis.del 'codo:success', (err) -> callback err
+
+  # Clear the failed queue.
+  #
+  # @param [Function] callback the result callback
+  #
+  @clearFailed: (callback) ->
+    Resque.instance().redis.del 'codo:failed', (err) -> callback err
+
+  # Returns the job id status
+  #
+  # @param [String] id the job id
+  # @param [Function] callback the result callback
+  # @return [String] the job status status
+  #
+  @status: (id, callback) ->
+    try
+      contains = (jobs) -> _.include(_.map(jobs, (job) -> job.id), id)
+
+      Async.parallel {
+        queued: Resque.queued
+        working: Resque.working
+        succeed: Resque.succeed
+        failed: Resque.failed
+      },
+      (err, results) ->
+        if contains results.succeed
+          callback null, 'succeed'
+        else if contains results.failed
+          callback null, 'failed'
+        else if contains results.working
+          callback null, 'working'
+        else if contains results.queued
+          callback null, 'queued'
+        else
+          callback null, 'unknown'
+
+    catch error
+      callback error
+
   # Decode a Redis result set with Jobs.
   #
   # @param [Array<String>] the redis result set
@@ -96,11 +163,25 @@ module.exports = class Resque
   #
   @decode: (results) ->
     return null unless results
-
     jobs = for result in results
       data = JSON.parse result
+
       {
-      id:  data.args[0]
-      url: data.args[1]
-      commit:  data.args[2]
+        id:     data.args[0]
+        url:    data.args[1]
+        commit: data.args[2]
+        start:  data.start
+        end:    data.end
+        error:  data.error
       }
+
+  # Creates a unique job id
+  #
+  # @return [String] the job id
+  # @private
+  #
+  @createJobId: ->
+    'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace /[xy]/g, (c) ->
+      r = Math.random() * 16 | 0
+      v = if c is 'x' then r else (r&0x3 | 0x8)
+      v.toString 16

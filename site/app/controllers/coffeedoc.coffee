@@ -19,57 +19,14 @@ module.exports = class CoffeeDocController
     url =req.param 'url'
     commit = req.param('commit') || 'master'
 
-    # Generate Job ID
-    id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace /[xy]/g, (c) ->
-      r = Math.random() * 16 | 0
-      v = if c is 'x' then r else (r&0x3 | 0x8)
-      v.toString 16
-
     console.log "New website checkout received for #{ url }"
-    Resque.instance().enqueue 'codo', 'generate', [id, url, commit]
-
-    res.send id
+    res.send Resque.enqueue 'codo', 'generate', [url, commit]
 
   # Returns the state of a checkout
   #
   @state: (req, res) ->
-    url    = req.param 'url'
-    commit = req.param 'commit'
-    id     = req.param 'id'
-    job    = JSON.stringify class: 'generate', args: [id, url, commit]
-
-    Resque.instance().redis.lrange 'resque:queue:codo', 0, -1, (err, queued) ->
-      isQueued = false
-
-      jobs = for result in queued
-        data = JSON.parse result
-        isQueued = true if data.id is id
-
-      if isQueued
-        console.log "#{ id }: #{ url } (#{ commit }) is queued"
-        res.send 'queued'
-
-      else
-        Resque.instance().redis.sismember 'codo:working', job, (err, progress) ->
-          if progress is 1
-            console.log "#{ id }: #{ url } (#{ commit }) is in progress"
-            res.send 'progress'
-
-          else
-            Resque.instance().redis.sismember 'codo:failed', job, (err, failed) ->
-              if failed is 1
-                console.log "#{ id }: #{ url } (#{ commit }) is failed"
-                res.send 'failed'
-
-              else
-                Resque.instance().redis.sismember 'codo:success', job, (err, completed) ->
-                  if completed is 1
-                    console.log "#{ id }: #{ url } (#{ commit }) is completed"
-                    res.send 'completed'
-
-                  else
-                    console.log "#{ id }: #{ url } (#{ commit }) is unknown"
-                    res.send 'unknown'
+    Resque.status req.param('id'), (err, status) ->
+      res.send if err then 500 else status
 
   # Redirect www.coffeedoc.info to coffeedoc.info
   #

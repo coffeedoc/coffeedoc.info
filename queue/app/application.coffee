@@ -71,5 +71,8 @@ module.exports = class Application
 
   # Attach the application routes to the controllers.
   #
-  routes: =>
-    @app.get '/', QueueController.index
+  routes: ->
+    @app.get  '/',              QueueController.index
+    @app.post '/clear/working', QueueController.clearWorking
+    @app.post '/clear/succeed', QueueController.clearSucceed
+    @app.post '/clear/failed',  QueueController.clearFailed

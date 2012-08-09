@@ -24,14 +24,36 @@ a {
   opacity: 0.9;
 }
 
+.clearJobLog {
+  float: right;
+
+  a:hover {
+    background: transparent !important;
+  }
+}
+
 .jobs {
   list-style: none;
   padding: 0;
+
+  .id {
+    width: 285px;
+  }
+
+  .start, .end {
+    width: 215px;
+  }
 
   li {
     font-size: 1.2em;
     line-height: 1.4em;
     padding: 3px 5px;
+    overflow: auto;
+
+    > div {
+      float: left;
+      font-size: 12px;
+    }
   }
 
   ul {

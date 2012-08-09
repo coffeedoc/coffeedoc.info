@@ -55,11 +55,12 @@ module.exports = class CodoJob
               filePath = "#{ user }/#{ project }/#{ commit }/#{ filename }"
               console.log "#{ id }: Save file #{ filename } for project #{ user }/#{ project }"
 
-              codoFile = new File()
-              codoFile.path = filePath
-              codoFile.content = content
-              codoFile.live = false
-              codoFile.save()
+              file = new File()
+              file.path = filePath
+              file.content = content
+              file.live = false
+              file.save (err) ->
+                throw err if err
 
             # Documentation generated
             finish = (err) ->
@@ -110,5 +111,6 @@ module.exports = class CodoJob
             Codo.run finish, file, 'UA-33919772-1', { name: 'CoffeeDoc.info', href: '/', target: '_top' }
 
     catch error
-      console.log "#{ id }: Error processing #{ url }", error?.message
+      msg = error?.message || error
+      console.log "#{ id }: Error processing #{ url }: #{ msg }"
       done error

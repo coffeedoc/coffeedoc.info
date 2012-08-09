@@ -4,15 +4,10 @@ $(->
   #
   waitForDocs = (repo, commit, id, url) ->
     $.ajax
-      url: '/state',
-      data: {
-        id: id
-        url: repo
-        commit: commit
-      }
+      url: "/state/#{ id }",
       timeout: 2000
       success: (data) ->
-        if data is 'completed'
+        if data is 'succeed'
           docsComplete(url)
         else if data is 'failed'
           docsFailed()

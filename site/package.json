@@ -13,7 +13,9 @@
     "coffee-resque": "0.1.7",
     "redis": "0.7.2",
     "codo": "1.0.1",
-    "mongoose": "2.7.3"
+    "mongoose": "2.7.3",
+    "async": "0.1.22",
+    "underscore": "1.3.3"
   },
   "analyze": false,
   "subdomain": "www.coffeedoc",

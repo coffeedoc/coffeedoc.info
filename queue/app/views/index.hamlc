@@ -1,15 +1,29 @@
-- jobs = (title, jobs) ->
-  %h2= title
+- jobs = (title, jobs, name) ->
+  %h2
+    = title
+    - if name
+      .clearJobLog
+        %a{ href: "/clear/#{ name }", title: 'Clear the log' }
+          %img{ class: 'icon clear', src: '/images/clear.png' }
+
   %ul.jobs
     - if jobs.length is 0
-      %li No jobs are waiting the queue.
+      %li No jobs logged.
     - else
       - for job in jobs
         %li
-          %a{ href: job.url }= job.url
-          %small
-            != surround '(', ')', ->
-              %span<>= job.commit
+          .id
+            = job.id
+          .start
+            = job.start || '-'
+          .end
+            = job.end || '-'
+          .args
+            %a{ href: job.url }= job.url
+            %small
+              != surround '(', ')', ->
+                %span<>= job.commit
+
 !!!
 %html{ lang: 'en' }
   %head
@@ -37,9 +51,9 @@
 
     #content
       != jobs 'Queued jobs',  @queued
-      != jobs 'Working jobs', @working
-      != jobs 'Succeed jobs', @succeed
-      != jobs 'Failed jobs',  @failed
+      != jobs 'Working jobs', @working, 'working'
+      != jobs 'Succeed jobs', @succeed, 'succeed'
+      != jobs 'Failed jobs',  @failed,  'failed'
 
   #footer
     %a{ href: 'http://github.com/netzpirat/coffeedoc.info' } CoffeeDoc.info
