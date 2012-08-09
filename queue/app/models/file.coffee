@@ -11,7 +11,6 @@ class File extends Schema
     super({
       path:     { type: String, index: true }
       content:  { type: String }
-      live:     { type: Boolean, default: false }
     })
 
 module.exports = Mongoose.model 'File', new File()

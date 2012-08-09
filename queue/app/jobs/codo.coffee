@@ -1,4 +1,5 @@
-Codo = require 'codo'
+Async    = require 'async'
+Codo     = require 'codo'
 rimraf   = require 'rimraf'
 {exec}   = require 'child_process'
 temp     = require 'temp'
@@ -6,7 +7,7 @@ temp     = require 'temp'
 Project = require './../models/project'
 File    = require './../models/file'
 
-# Resque job that for Codo documentation
+# Coffee Resque 'codo' job
 #
 module.exports = class CodoJob
 
@@ -18,99 +19,126 @@ module.exports = class CodoJob
   # @param [Function] done the callback
   #
   @generate: (id, url, commit, done) ->
-    try
-      # Validate the URL
-      github = /^(?:https?|git):\/\/(?:www\.?)?github\.com\/([^\s/]+)\/([^\s/]+?)(?:\.git)?\/?$/
-      throw new Error("The GitHub repository URL #{ url } is not valid!") unless github.test url
+    worker = new CodoJob.Generator(id, url, commit)
 
-      [url, user, project] = url.match github
-      url = url.replace(/^https?:/, 'git:')
-      url = "#{ url }.git" unless /\.git/.test url
+    Async.waterfall [
+      worker.makeTempDirectory
+      worker.cloneRepository
+      worker.generateDocs
+      worker.findProject
+      worker.updateProject
+      worker.removeTempDirectory
+    ],
+    (err, result) ->
+      console.log("#{ id }: Error generating the docs: #{ error.message }") if err
+      done err
 
-      ref = /[A-Za-z0-0_-][A-Za-z0-0_.-]*/
-      throw new Error("The Git commit #{ commit } is not valid!") unless ref.test commit
+  # The generate Codo job worker
+  #
+  class CodoJob.Generator
 
-      # Create temp dir for checkout
-      temp.mkdir 'codo', (err, path) ->
-        throw err if err
+    # Construct a new generation Job
+    #
+    constructor: (@id, @url, @commit) ->
+      [url, @user, @project] = url.match /^(?:https?|git):\/\/(?:www\.?)?github\.com\/([^\s/]+)\/([^\s/]+?)(?:\.git)?\/?$/
 
-        # Clone git repository
-        console.log "#{ id }: Clone repository #{ url } to #{ path }"
-
+    # Create a temporary directory to checkout
+    # and create the Codo documentation.
+    #
+    # @param [Function] done the callback
+    #
+    makeTempDirectory: (done) =>
+      temp.mkdir 'codo', (err, path) =>
+        @log "Temp directory #{ path } created."
         process.chdir path
-        exec "git clone #{ url } .", (err) ->
-          throw err if err
+        done err, path
 
-          # Checkout revision
-          console.log "#{ id }: Checkout revision #{ commit } for #{ url }"
+    # Clone the repository into the temporary directory
+    #
+    # @param [String] path the temp dir path
+    # @param [Function] done the callback
+    #
+    cloneRepository: (@path, done) =>
+      @log "Clone Git repository #{ @url }."
+      exec "git clone #{ @url } .", done
 
-          exec "git checkout #{ commit }", (err) ->
-            throw err if err
+    # Check out the git commit.
+    #
+    # @param [String] stdout the git clone output
+    # @param [String] stderr the git clone error output
+    # @param [Function] done the callback
+    #
+    checkoutCommit: (stdout, stderr, done) =>
+      @log "Checkout revision #{ @commit }"
+      exec "git checkout #{ @commit }", done
 
-            # Generate Codo documentation
-            console.log "#{ id }: Generate Codo documentation for #{ url } (commit #{ commit })"
+    # Generate the Codo documentation
+    #
+    # @param [String] stdout the git checkout output
+    # @param [String] stderr the git checkout error output
+    # @param [Function] done the callback
+    #
+    generateDocs: (stdout, stderr, done) =>
+      @log 'Generate Codo documentation'
+      Codo.run done, @writeFile, 'UA-33919772-1', { name: 'CoffeeDoc.info', href: '/', target: '_top' }
 
-            # Write generated file to mongodb
-            file = (filename, content) ->
-              filePath = "#{ user }/#{ project }/#{ commit }/#{ filename }"
-              console.log "#{ id }: Save file #{ filename } for project #{ user }/#{ project }"
+    # Find the project
+    #
+    # @param [Function] done the callback
+    #
+    findProject: (done) =>
+      @log "Find existing project"
+      Project.findOne { user: @user, project: @project }, done
 
-              file = new File()
-              file.path = filePath
-              file.content = content
-              file.live = false
-              file.save (err) ->
-                throw err if err
+    # Create or update the project
+    #
+    # @param [Project] project the project
+    # @param [Function] done the callback
+    #
+    updateProject: (project, done) =>
+      unless project
+        @log "Create new project #{ @user }/#{ @project }"
 
-            # Documentation generated
-            finish = (err) ->
-              if err
-                # Remove all the files that already have been generated
-                File.remove { path: ///#{ user }/#{ project }/#{ commit }///, live: false }, -> throw err
+        project = new Project()
+        project.user = @user
+        project.project = @project
 
-              # Remove the files that are currently live
-              File.remove { path: ///#{ user }/#{ project }/#{ commit }///, live: true }, (err, num) ->
-                throw err if err
+      unless @commit in project.versions
+        project.versions.push commit
+        master = project.versions.filter (v) -> v is 'master'
+        other  = project.versions.filter (v) -> v isnt 'master'
+        project.versions = master.concat other.sort().reverse()
 
-                console.log "#{ id }: Removed #{ num } live files for #{ url }"
+      @log "Update project #{ @user }/#{ @project }"
 
-                # ... and mark the newly generated file as live
-                File.update { path: ///#{ user }/#{ project }/#{ commit }/// }, { live: true }, { multi: true }, (err, num) ->
-                  throw err if err
+      project.updated = new Date()
+      project.save done
 
-                  console.log "#{ id }: Added #{ num } live files for #{ url }"
+    # Remove the temporary checkout directory.
+    #
+    # @param [Project] project the updated project
+    # @param [Number] num the number of records changed
+    # @param [Function] done the callback
+    #
+    removeTempDirectory: (project, num, done) =>
+      rimraf @path, done
 
-                  # Update existing project
-                  Project.findOne { user: user, project: project }, (err, proj) ->
-                    throw err if err
+    # Write a generated file to the MongoDB
+    #
+    # @param [String] filename the file name
+    # @param [String] content the file content
+    #
+    writeFile: (filename, content) =>
+      @log "Save file #{ filename }"
 
-                    unless proj
-                      console.log "#{ id }: Create new project #{ user }/#{ project }"
+      file = new File()
+      file.path = "#{ @user }/#{ @project }/#{ @commit }/#{ filename }"
+      file.content = content
+      file.save()
 
-                      proj = new Project()
-                      proj.user = user
-                      proj.project = project
-
-                    unless commit in proj.versions
-                      proj.versions.push(commit)
-                      master = proj.versions.filter (v) -> v is 'master'
-                      other  = proj.versions.filter (v) -> v isnt 'master'
-                      proj.versions = master.concat other.sort().reverse()
-
-                    proj.updated = new Date()
-
-                    proj.save (err, num) ->
-                      throw err if err
-
-                      console.log "#{ id }: Project #{ user }/#{ project } saved."
-
-                      rimraf path, (err) ->
-                        console.log "#{ id }: Finished #{ user }/#{ project }."
-                        done()
-
-            Codo.run finish, file, 'UA-33919772-1', { name: 'CoffeeDoc.info', href: '/', target: '_top' }
-
-    catch error
-      msg = error?.message || error
-      console.log "#{ id }: Error processing #{ url }: #{ msg }"
-      done error
+    # Log a worker status
+    #
+    # @param [String] msg the log message
+    #
+    log: (msg) =>
+      console.log "#{ @id }: #{ msg }"

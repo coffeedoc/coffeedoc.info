@@ -16,11 +16,30 @@ module.exports = class CoffeeDocController
   # Add project from the web page
   #
   @add: (req, res) ->
-    url =req.param 'url'
+    url    = req.param 'url'
     commit = req.param('commit') || 'master'
 
     console.log "New website checkout received for #{ url }"
-    res.send Resque.enqueue 'codo', 'generate', [url, commit]
+
+    # Validate the URL
+    urlFormat    = /^(?:https?|git):\/\/(?:www\.?)?github\.com\/([^\s/]+)\/([^\s/]+?)(?:\.git)?\/?$/
+    commitFormat = /[A-Za-z0-0_-][A-Za-z0-0_.-]*/
+
+    # Valid request
+    if urlFormat.test(url) and commitFormat.test(commit)
+
+      [url, user, project] = url.match urlFormat
+      url = url.replace(/^https?:/, 'git:')
+      url = "#{ url }.git" unless /\.git/.test url
+
+      id = Resque.enqueue 'codo', 'generate', [url, commit]
+      console.log "Create new job for #{ url } (#{ commit })"
+
+      res.send id
+
+    # Wrong url or commit format
+    else
+      res.send 412
 
   # Returns the state of a checkout
   #
