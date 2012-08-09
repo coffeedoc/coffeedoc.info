@@ -16,7 +16,7 @@ You can start the first drone locally with:
 
 ```
 cd website
-coffee app.coffee
+coffee server
 ```
 
 and open it in your browser under [http://localhost:8080/](http://localhost:8080/)
@@ -30,7 +30,7 @@ You can start the second drone locally with:
 
 ```
 cd queue
-coffee app.coffee
+coffee server
 ```
 
 and open it in your browser under [http://localhost:3000/](http://localhost:3000/)
