@@ -104,7 +104,7 @@ module.exports = class CodoJob
         project.project = @project
 
       unless @commit in project.versions
-        project.versions.push commit
+        project.versions.push @commit
         master = project.versions.filter (v) -> v is 'master'
         other  = project.versions.filter (v) -> v isnt 'master'
         project.versions = master.concat other.sort().reverse()
