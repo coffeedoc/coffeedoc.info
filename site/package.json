@@ -1,7 +1,7 @@
 {
   "name": "coffeedoc-site",
   "author": "Michael Kessler <michi@netzpiraten.ch>",
-  "version": "0.8.3",
+  "version": "0.9.0",
   "scripts": {
     "start": "coffee server.coffee"
   },
@@ -20,7 +20,6 @@
   "analyze": false,
   "subdomain": "www.coffeedoc",
   "domains": [
-    "coffeedoc.info",
     "www.coffeedoc.info"
   ],
   "engines": {
