@@ -30,7 +30,7 @@ module.exports = class CodoJob
       worker.removeTempDirectory
     ],
     (err, result) ->
-      console.log("#{ id }: Error generating the docs: #{ error.message }") if err
+      console.log("#{ id }: Error generating the docs: #{ err.message }") if err
       done err
 
   # The generate Codo job worker
