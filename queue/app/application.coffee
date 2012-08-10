@@ -1,5 +1,6 @@
-Http     = require 'http'
-Path     = require 'path'
+http     = require 'http'
+path     = require 'path'
+fs       = require 'fs'
 
 Express    = require 'express'
 Codo       = require 'codo'
@@ -29,7 +30,7 @@ module.exports = class Application
   # @return [http.Server] the HTTP server
   #
   start: ->
-    server = Http.createServer(@app).listen @app.get('port'), =>
+    server = http.createServer(@app).listen @app.get('port'), =>
       console.log 'Queue server listening on port %d in %s mode', @app.get('port'), @app.settings.env
 
   # Application configuration for all environments.
@@ -39,18 +40,22 @@ module.exports = class Application
   configuration: =>
     @app.set 'port', 3000
 
-    @app.set 'views', Path.join(__dirname, 'views')
+    @app.set 'views', path.join(__dirname, 'views')
     @app.set 'view engine', 'hamlc'
     @app.set 'view options', { layout: false }
-    @app.locals = { codoVersion: Codo.version() }
+
+    @app.locals = {
+      codoVersion: Codo.version()
+      coffeedocVersion: 'v' + JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf-8'))['version']
+    }
 
     @app.use Express.bodyParser()
     @app.use Express.methodOverride()
 
     # Configure assets
-    @app.use new Assets({ src: Path.join(__dirname, 'assets') })
-    @app.use '/images', Express.static Path.join(__dirname, 'assets', 'images')
-    @app.use Express.favicon Path.join(__dirname, 'assets', 'images', 'favicon.ico')
+    @app.use new Assets({ src: path.join(__dirname, 'assets') })
+    @app.use '/images', Express.static path.join(__dirname, 'assets', 'images')
+    @app.use Express.favicon path.join(__dirname, 'assets', 'images', 'favicon.ico')
 
   # Development configuration
   #

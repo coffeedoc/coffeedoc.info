@@ -56,7 +56,8 @@
       != jobs 'Failed jobs',  @failed,  'failed'
 
   #footer
-    %a{ href: 'http://github.com/netzpirat/coffeedoc.info' } CoffeeDoc.info
+    %a{ href: 'http://github.com/netzpirat/coffeedoc.info' } CoffeeDoc.info Queue
+    = @coffeedocVersion
     is powered by
     %a{ href: 'http://github.com/netzpirat/codo' } Codo
     = @codoVersion

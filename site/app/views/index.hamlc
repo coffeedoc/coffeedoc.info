@@ -124,6 +124,7 @@
 
   #footer
     %a{ href: 'http://github.com/netzpirat/coffeedoc.info' } CoffeeDoc.info
+    = @coffeedocVersion
     is powered by
     %a{ href: 'http://github.com/netzpirat/codo' } Codo
     = @codoVersion
