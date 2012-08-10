@@ -34,12 +34,6 @@
         %a{ href: '/' } CoffeeDoc.info
         %small Codo Documentation Server
 
-    %ul#top_nav
-      %li
-        %a.new_checkout{ href: '#' } Add Project
-      %li
-        %a.about{ href: '#' } About
-
   .not_found
     %strong
       404
