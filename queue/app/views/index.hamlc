@@ -23,6 +23,9 @@
             %small
               != surround '(', ')', ->
                 %span<>= job.commit
+          - if job.error
+            .error
+              = job.error
 
 !!!
 %html{ lang: 'en' }
