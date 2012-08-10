@@ -50,7 +50,10 @@ module.exports = class CodoJob
     makeTempDirectory: (done) =>
       temp.mkdir 'codo', (err, path) =>
         @log "Temp directory #{ path } created."
+
+        @previousWorkDir = process.cwd()
         process.chdir path
+
         done err, path
 
     # Clone the repository into the temporary directory
@@ -121,6 +124,7 @@ module.exports = class CodoJob
     # @param [Function] done the callback
     #
     removeTempDirectory: (project, num, done) =>
+      process.chdir @previousWorkDir
       rimraf @path, done
 
     # Write a generated file to the MongoDB
