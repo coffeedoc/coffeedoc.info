@@ -46,7 +46,6 @@ module.exports = class Application
 
     @app.use Express.bodyParser()
     @app.use Express.methodOverride()
-    @app.use @app.router
 
     # Configure assets
     @app.use new Assets({ src: Path.join(__dirname, 'assets') })
