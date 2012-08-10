@@ -7,13 +7,23 @@ module.exports = class GitHubController
   # Github checkout hook
   #
   @checkout: (req, res) ->
-    payload = JSON.parse req.param('payload')
+    try
+      payload = JSON.parse req.param('payload')
 
-    unless payload.repository.private
-      url = payload.repository.url
-      commit = 'master'
+    console.log 'Received GitHub checkout', payload
 
-      console.log "Enque new GitHub checkout for repository #{ url } (#{ commit })"
-      Resque.enqueue 'codo', 'generate', [url, commit]
+    if payload
+      url    = payload.repository.url
 
-      res.send 200
+      unless payload.repository.private
+        commit = 'master'
+        console.log "Enque new GitHub checkout for repository #{ url } (#{ commit })"
+        Resque.enqueue 'codo', 'generate', [url, commit]
+        res.send 200
+
+      else
+        console.log "Ignore private repository #{ url }"
+        res.send 412
+
+    else
+      res.send 412
