@@ -47,11 +47,11 @@ module.exports = class CoffeeDocController
     Resque.status req.param('id'), (err, status) ->
       res.send if err then 500 else status
 
-  # Redirect www.coffeedoc.info to coffeedoc.info
+  # Redirect coffeedoc.info to www.coffeedoc.info
   #
   @redirect: (req, res, next) ->
-    if /^www/.test req.headers.host
-      res.redirect "http://#{ req.headers.host.replace(/^www\./, '') + req.url }"
+    unless /^www/.test req.headers.host
+      res.redirect "http://www.#{ req.headers.host + req.url }"
     else
       next()
 
