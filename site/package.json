@@ -1,7 +1,7 @@
 {
   "name": "coffeedoc-site",
   "author": "Michael Kessler <michi@netzpiraten.ch>",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "scripts": {
     "start": "coffee server.coffee"
   },
