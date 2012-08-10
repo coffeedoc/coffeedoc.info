@@ -25,7 +25,7 @@ module.exports = class CodoController
     # Locate Codo file resource
     File.findOne { path: path }, ['content'], (err, doc) ->
       if err || !doc
-        res.send 404
+        res.render 'not_found', { url: req.url }
       else
         # Detect content type
         switch path
