@@ -7,7 +7,7 @@ CoffeeResque = require 'coffee-resque'
 #
 module.exports = class Resque
 
-# The Coffee Resque queue
+  # The Coffee Resque queue
   resque = null
 
   # Get the resque queue
