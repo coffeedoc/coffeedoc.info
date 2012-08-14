@@ -13,8 +13,8 @@ QueueController = require './controllers/queue'
 #
 module.exports = class Application
 
-# Construct a new Express.js application
-#
+  # Construct a new Express.js application
+  #
   constructor: ->
     @app = Express()
     @app.engine '.hamlc', HamlCoffee.__express

@@ -5,8 +5,8 @@ Mongoose = require 'mongoose'
 #
 class Project extends Schema
 
-# Construct a project model
-#
+  # Construct a project model
+  #
   constructor: ->
     super({
       user:     { type: String, index: true }

@@ -5,8 +5,8 @@ Mongoose = require 'mongoose'
 #
 class File extends Schema
 
-# Construct a project model
-#
+  # Construct a project model
+  #
   constructor: ->
     super({
       path:     { type: String, index: true }
