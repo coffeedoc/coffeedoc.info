@@ -18,11 +18,9 @@ module.exports = class Resque
     return resque if resque
 
     if process.env.NODE_ENV is 'production'
-      resque = CoffeeResque.connect {
-        host: 'gar.redistogo.com'
-        port: 9066
-        password: process.env.REDIS_PWD
-      }
+      redis = Redis.createClient 9066, 'gar.redistogo.com', { parser: 'javascript' }
+      redis.auth process.env.REDIS_PWD
+      resque = CoffeeResque.connect({ redis: redis })
     else
       resque = CoffeeResque.connect()
 
