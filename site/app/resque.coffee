@@ -2,6 +2,7 @@ Async  = require 'async'
 _      = require 'underscore'
 
 CoffeeResque = require 'coffee-resque'
+Redis        = require 'redis'
 
 # Singleton Resque acessor
 #
