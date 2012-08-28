@@ -133,12 +133,10 @@ module.exports = class CodoJob
     # @param [String] content the file content
     #
     writeFile: (filename, content) =>
-      @log "Save file #{ filename }"
-
-      file = new File()
-      file.path = "#{ @user }/#{ @project }/#{ @commit }/#{ filename }"
-      file.content = content
-      file.save()
+      path = "#{ @user }/#{ @project }/#{ @commit }/#{ filename }"
+      @log "Save file #{ path }"
+      File.findOneAndUpdate { path: path }, { path: path, content: content }, { upsert: true }, (err) ->
+        @log "Error saving file #{ path }: #{ err }" if err
 
     # Log a worker status
     #
