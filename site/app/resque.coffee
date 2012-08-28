@@ -8,7 +8,7 @@ Redis        = require 'redis'
 #
 module.exports = class Resque
 
-  # The Coffee Resque queue
+# The Coffee Resque queue
   resque = null
 
   # Get the resque queue
@@ -83,23 +83,26 @@ module.exports = class Resque
   #
   @working: (callback) ->
     Resque.instance().redis.smembers 'codo:working', (err, results) ->
-      callback err, Resque.decode(results)
+      jobs = Resque.decode(results)
+      callback err, _.sortBy jobs, (job) -> -1 * new Date(job.start).getTime()
 
   # Get the succeed Jobs
   #
   # @param [Function] callback the result callback
   #
   @succeed: (callback) ->
-    Resque.instance().redis.smembers 'codo:success', (err, results) ->
-      callback err, Resque.decode(results)
+    jobs = Resque.instance().redis.smembers 'codo:success', (err, results) ->
+      jobs = Resque.decode(results)
+      callback err, _.sortBy jobs, (job) -> -1 * new Date(job.end).getTime()
 
   # Get the failed Jobs
   #
   # @param [Function] callback the result callback
   #
   @failed: (callback) ->
-    Resque.instance().redis.smembers 'codo:failed', (err, results) ->
-      callback err, Resque.decode(results)
+    jobs = Resque.instance().redis.smembers 'codo:failed', (err, results) ->
+      jobs = Resque.decode(results)
+      callback err, _.sortBy jobs, (job) -> -1 * new Date(job.end).getTime()
 
   # Clear the working queue.
   #
@@ -133,10 +136,10 @@ module.exports = class Resque
       contains = (jobs) -> _.include(_.map(jobs, (job) -> job.id), id)
 
       Async.parallel {
-        queued: Resque.queued
-        working: Resque.working
-        succeed: Resque.succeed
-        failed: Resque.failed
+      queued: Resque.queued
+      working: Resque.working
+      succeed: Resque.succeed
+      failed: Resque.failed
       },
       (err, results) ->
         if contains results.succeed
@@ -166,12 +169,12 @@ module.exports = class Resque
       data = JSON.parse result
 
       {
-        id:     data.args[0]
-        url:    data.args[1]
-        commit: data.args[2]
-        start:  data.start
-        end:    data.end
-        error:  data.error
+      id:     data.args[0]
+      url:    data.args[1]
+      commit: data.args[2]
+      start:  data.start
+      end:    data.end
+      error:  data.error
       }
 
   # Creates a unique job id
