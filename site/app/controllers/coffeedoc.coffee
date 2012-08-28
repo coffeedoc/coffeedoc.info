@@ -10,7 +10,7 @@ module.exports = class CoffeeDocController
   # of all projects.
   #
   @index: (req, res) ->
-    Project.find {}, ['user', 'project', 'versions'], { sort: { user: 1, project: 1 } }, (err, docs) ->
+    Project.find {}, 'user project versions', { sort: { user: 1, project: 1 } }, (err, docs) ->
       res.render 'index', { projects: docs }
 
   # Add project from the web page
