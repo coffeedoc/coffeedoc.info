@@ -12,7 +12,7 @@ class Project extends Schema
       user:     { type: String, index: true }
       project:  { type: String, index: true }
       versions: { type: Array }
-      updated:  { type: String }
+      updated:  { type: Date }
     })
 
 module.exports = Mongoose.model 'Project', new Project()

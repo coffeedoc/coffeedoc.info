@@ -106,7 +106,7 @@
         looks and feels right and helps to find quickly the information needed.
 
     #content
-      %h2 Github Projects
+      %h2 Recently Updated Github Projects
       %ul.libraries
         - for project in @projects
           %li
