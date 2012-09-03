@@ -94,6 +94,7 @@ module.exports = class Application
     @app.get  '/github/:user/:project', CodoController.latest
     @app.get  /github\/(.+)$/,          CodoController.show
 
+    @app.get  '/checkout', GitHubController.checkoutInfo
     @app.post '/checkout', GitHubController.checkout
 
     @app.get '*', CoffeeDocController.notFound

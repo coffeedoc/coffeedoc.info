@@ -1,0 +1,50 @@
+!!!
+%html{ lang: 'en' }
+  %head
+    %title CoffeeDoc.info - Codo Documentation Server
+    %link{ rel: 'shortcut icon', href: '/images/favicon.ico' }
+    %meta{ charset: 'utf-8' }
+    %meta{ :charset => 'en', 'http-equiv' => 'content-language' }
+    %meta{ charset: 'CoffeeScript API documentation generator as a service', name: 'description' }
+    %meta{ charset: 'CoffeeScript, documentation, API, service, online', name: 'keywords' }
+
+    != js 'jquery'
+    != js 'application'
+    != css 'application'
+
+    :javascript
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-33919772-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+  %body
+    %a#learn_codo{ href: 'https://github.com/netzpirat/codo', title: 'Learn More About Codo' }
+      %img{ src: '/images/learn.png' }
+
+    %img#beta{ src: '/images/beta.png' }
+
+    #logo
+      %h1
+        %a{ href: '/' } CoffeeDoc.info
+        %small Codo Documentation Server
+
+    #checkoutInfo
+      %p
+        Hey there, this is the
+        != succeed '.', ->
+          %a{ href: 'https://help.github.com/articles/post-receive-hooks' } GitHub post-receive Hook
+
+      %p
+        If you configure your GitHub project properly, then CoffeeDoc.info will automatically rebuild your Codo docs
+        when you push new code!
+
+      %p
+        What are you waiting for? Go ahead and add the CoffeeDoc.info hook now:
+        %pre
+          http://coffeedoc.info/checkout

@@ -4,6 +4,11 @@ Resque = require '../resque'
 #
 module.exports = class GitHubController
 
+  # Github checkout info
+  #
+  @checkoutInfo: (req, res) ->
+    res.render 'checkout'
+
   # Github checkout hook
   #
   @checkout: (req, res) ->
