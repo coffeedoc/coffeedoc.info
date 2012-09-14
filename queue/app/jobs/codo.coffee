@@ -24,6 +24,7 @@ module.exports = class CodoJob
     Async.waterfall [
       worker.makeTempDirectory
       worker.cloneRepository
+      worker.checkoutCommit
       worker.generateDocs
       worker.findProject
       worker.updateProject
