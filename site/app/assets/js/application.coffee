@@ -47,10 +47,10 @@ $(->
     url = $('#url').val().trim()
     commit = $('#commit').val() || 'master'
 
-    [repo, user, project] = url.match /^(?:https?|git):\/\/(?:www\.?)?github\.com\/([^\s/]+)\/([^\s/]+?)(?:\.git)?\/?$/
-    console.log repo, user, project
+    if /^(?:https?|git):\/\/(?:www\.?)?github\.com\/([^\s/]+)\/([^\s/]+?)(?:\.git)?\/?$/.test url
 
-    if repo
+      [repo, user, project] = url.match /^(?:https?|git):\/\/(?:www\.?)?github\.com\/([^\s/]+)\/([^\s/]+?)(?:\.git)?\/?$/
+
       xhr = $.post('/add', {
         url: repo
         commit: commit
