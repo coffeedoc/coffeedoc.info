@@ -88,8 +88,17 @@
           Commit (optional):
           %input#commit{ type: 'text', name: 'commit', value: '', style: 'width: 122px;' }
           %input#submit{ type: 'submit', id: 'submit', value: 'Go' }
+
       #message
 
+      %p
+        Looking for a
+        %a{ href: 'http://github.com' } GitHub
+        != succeed '?', ->
+          %a{ href: 'http://help.github.com/post-receive-hooks/' } post-receive hook
+        Use
+          != succeed '.', ->
+            %tt http://coffeedoc.info/checkout
     #teaser
 
       %p
