@@ -21,7 +21,7 @@ module.exports = class GitHubController
       url    = payload.repository.url
 
       unless payload.repository.private
-        commit = 'master'
+        commit = payload.ref?.substring(11) || 'master'
         console.log "Enque new GitHub checkout for repository #{ url } (#{ commit })"
         Resque.enqueue 'codo', 'generate', [url, commit]
         res.send 200
