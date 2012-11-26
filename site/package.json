@@ -1,15 +1,15 @@
 {
   "name": "coffeedoc-site",
   "author": "Michael Kessler <michi@netzpiraten.ch>",
-  "version": "1.0.5",
+  "version": "1.0.5-1",
   "scripts": {
     "start": "coffee server.coffee"
   },
   "dependencies": {
     "express": "3.0.x",
     "connect-assets": "2.3.x",
-    "haml-coffee": "1.7.x",
-    "stylus": "0.30.x",
+    "haml-coffee": "1.8.x",
+    "stylus": "0.31.x",
     "coffee-resque": "0.1.x",
     "redis": "0.8.x",
     "codo": "1.5.x",
