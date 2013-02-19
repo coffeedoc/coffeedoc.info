@@ -6,17 +6,17 @@
     "start": "coffee server.coffee"
   },
   "dependencies": {
-    "express": "3.0.x",
+    "express": "3.1.x",
     "connect-assets": "2.3.x",
-    "haml-coffee": "1.8.x",
-    "stylus": "0.31.x",
+    "haml-coffee": "1.10.x",
+    "stylus": "0.32.x",
     "coffee-resque": "0.1.x",
     "redis": "0.8.x",
     "codo": "1.5.x",
-    "mongoose": "3.4.x",
+    "mongoose": "3.5.x",
     "temp": "0.4.x",
-    "rimraf": "2.0.x",
-    "async": "0.1.x",
+    "rimraf": "2.1.x",
+    "async": "0.2.x",
     "underscore": "1.4.x"
   },
   "analyze": false,
