@@ -1,7 +1,7 @@
 {
   "name": "coffeedoc-queue",
   "author": "Michael Kessler <michi@netzpiraten.ch>",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "scripts": {
     "start": "coffee server.coffee"
   },
@@ -20,7 +20,7 @@
     "underscore": "1.4.x"
   },
   "analyze": false,
-  "subdomain": "queue.coffeedoc",
+  "subdomain": "coffeedoc-queue",
   "domains": [
     "queue.coffeedoc.info"
   ],
