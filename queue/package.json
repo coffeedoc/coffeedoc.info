@@ -1,7 +1,7 @@
 {
   "name": "coffeedoc-queue",
   "author": "Michael Kessler <michi@netzpiraten.ch>",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "scripts": {
     "start": "coffee server.coffee"
   },
@@ -12,7 +12,7 @@
     "stylus": "0.32.x",
     "coffee-resque": "0.1.x",
     "redis": "0.8.x",
-    "codo": "1.5.x",
+    "codo": "1.6.x",
     "mongoose": "3.5.x",
     "temp": "0.4.x",
     "rimraf": "2.1.x",
