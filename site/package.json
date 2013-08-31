@@ -1,21 +1,21 @@
 {
   "name": "coffeedoc-site",
   "author": "Michael Kessler <michi@netzpiraten.ch>",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "scripts": {
     "start": "coffee server.coffee"
   },
   "dependencies": {
-    "express": "3.1.x",
-    "connect-assets": "2.3.x",
-    "haml-coffee": "1.10.x",
-    "stylus": "0.32.x",
+    "express": "3.3.x",
+    "connect-assets": "2.5.x",
+    "haml-coffee": "1.11.x",
+    "stylus": "0.37.x",
     "coffee-resque": "0.1.x",
     "redis": "0.8.x",
-    "codo": "1.6.x",
-    "mongoose": "3.5.x",
+    "codo": "1.7.x",
+    "mongoose": "3.6.x",
     "async": "0.2.x",
-    "underscore": "1.4.x"
+    "underscore": "1.5.x"
   },
   "analyze": false,
   "subdomain": "coffeedoc-site",
