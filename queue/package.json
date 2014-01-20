@@ -1,6 +1,6 @@
 {
   "name": "coffeedoc-queue",
-  "author": "Michael Kessler <michi@netzpiraten.ch>",
+  "author": "Michael Kessler <michi@flinkfinger.com>",
   "version": "1.4.0",
   "scripts": {
     "start": "coffee server.coffee"

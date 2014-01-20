@@ -130,12 +130,12 @@
                     %a{ href: "/github/#{ project.user }/#{ project.project }/#{ v }" }= v
 
   #footer
-    %a{ href: 'http://github.com/netzpirat/coffeedoc.info' } CoffeeDoc.info
+    %a{ href: 'http://github.com/coffeedoc/coffeedoc.info' } CoffeeDoc.info
     = @coffeedocVersion
     is powered by
-    %a{ href: 'http://github.com/netzpirat/codo' } Codo
+    %a{ href: 'http://github.com/coffeedoc/codo' } Codo
     = @codoVersion
     = surround '(Node.js ', ').', -> process.version
     .sponsored
       Sponsored by
-      %a{ href: 'https://mksoft.ch'} mksoft.ch
+      %a{ href: 'http://www.flinkfinger.com'} FlinkFinger GmbH

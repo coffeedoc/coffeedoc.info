@@ -57,12 +57,12 @@
       != jobs 'Failed jobs',  @failed,  'failed'
 
   #footer
-    %a{ href: 'http://github.com/netzpirat/coffeedoc.info' } CoffeeDoc.info Queue
+    %a{ href: 'http://github.com/coffeedoc/coffeedoc.info' } CoffeeDoc.info Queue
     = @coffeedocVersion
     is powered by
-    %a{ href: 'http://github.com/netzpirat/codo' } Codo
+    %a{ href: 'http://github.com/coffeedoc/codo' } Codo
     = @codoVersion
     = surround '(Node.js ', ').', -> process.version
     .sponsored
       Sponsored by
-      %a{ href: 'https://mksoft.ch'} mksoft.ch
+      %a{ href: 'http://www.flinkfinger.com'} FlinkFinger GmbH
