@@ -37,7 +37,7 @@ and open it in your browser under [http://localhost:3000/](http://localhost:3000
 
 ## Author
 
-* [Michael Kessler](https://github.com/netzpirat) ([@netzpirat](http://twitter.com/#!/netzpirat), [mksoft.ch](https://mksoft.ch))
+* [Michael Kessler](https://github.com/netzpirat) ([@netzpirat](http://twitter.com/#!/netzpirat), [flinkfinger.com](http://www.flinkfinger.com))
 
 ## License
 
