@@ -1,11 +1,12 @@
 {
   "name": "coffeedoc-queue",
   "author": "Michael Kessler <michi@flinkfinger.com>",
-  "version": "2.0.0-1",
+  "version": "2.0.1",
   "scripts": {
     "start": "coffee server.coffee"
   },
   "dependencies": {
+    "coffee-script": "1.7.1",
     "express": "3.4.x",
     "connect-assets": "2.5.x",
     "haml-coffee": "1.12.x",
