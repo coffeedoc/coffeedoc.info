@@ -1,5 +1,9 @@
 # CoffeeDoc.info
 
+---
+Currently down and the domain is lost. Tool is still useful to setup your private services tho and is kept for this and historical purposes.
+--
+
 Welcome to the [Codo](https://github.com/netzpirat/codo) documentation server as a service.
 You'll find me online at [http://www.coffeedoc.info](http://www.coffeedoc.info).
 
