@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "coffee-script": "1.7.1",
-    "express": "3.4.x",
+    "express": "4.17.x",
     "connect-assets": "2.5.x",
     "haml-coffee": "1.12.x",
     "stylus": "0.38.x",
