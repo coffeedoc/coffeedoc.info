@@ -14,7 +14,7 @@
     "coffee-resque": "0.1.x",
     "redis": "0.8.x",
     "codo": "1.9.x",
-    "mongoose": "3.6.x",
+    "mongoose": "5.7.x",
     "temp": "0.6.x",
     "rimraf": "2.2.x",
     "async": "0.2.x",
